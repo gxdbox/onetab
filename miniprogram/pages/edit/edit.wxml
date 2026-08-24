@@ -1,0 +1,72 @@
+<view class="page" wx:if="{{id}}">
+  <view class="field-label serif">它叫什么</view>
+  <input
+    class="name-input serif"
+    placeholder="改个名字"
+    placeholder-class="placeholder"
+    value="{{name}}"
+    bindinput="onName"
+    maxlength="20"
+  />
+
+  <view class="field-label">场景</view>
+  <view class="scene-chips">
+    <button
+      wx:for="{{scenes}}"
+      wx:key="id"
+      class="chip-btn {{sceneId === item.id ? 'on' : ''}}"
+      data-scene="{{item.id}}"
+      bind:tap="pickScene"
+    >{{item.emoji}} {{item.label}}</button>
+  </view>
+
+  <view class="field-label">开心程度（加权抽签的输入）</view>
+  <view class="joy-row">
+    <text
+      wx:for="{{[1,2,3,4,5]}}"
+      wx:key="*this"
+      class="star {{item <= joy ? 'on' : ''}}"
+      data-v="{{item}}"
+      bind:tap="pickJoy"
+    >{{item <= joy ? '★' : '☆'}}</text>
+  </view>
+
+  <view class="field-label">备注（≤ 50 字）</view>
+  <textarea
+    class="note-area"
+    placeholder="加辣，不要香菜"
+    placeholder-class="placeholder"
+    value="{{note}}"
+    bindinput="onNote"
+    maxlength="50"
+  />
+
+  <view class="field-label">照片</view>
+  <view class="photo-row">
+    <view class="photo-box" bind:tap="changePhoto">
+      <image wx:if="{{photo}}" class="photo-preview" src="{{photo}}" mode="aspectFill" />
+      <view wx:else class="photo-empty">📷</view>
+    </view>
+    <view wx:if="{{photo}}" class="media-ops">
+      <view class="op-btn" bind:tap="changePhoto">换一张</view>
+      <view class="op-btn op-danger" bind:tap="removePhotoUI">移除</view>
+    </view>
+  </view>
+
+  <view class="field-label">语音（15 秒以内）</view>
+  <view class="voice-row">
+    <view wx:if="{{!audio}}" class="voice-btn {{recording ? 'recording' : ''}}" bind:tap="toggleRecord">
+      <text wx:if="{{!recording}}">🎤 {{recording ? '' : '说一句'}}</text>
+      <block wx:else>⏺ 录音中 {{recordSecs}}s / 15s · 点击停止</block>
+    </view>
+    <block wx:else>
+      <view class="voice-btn voice-done" bind:tap="playAudio">▶︎ 试听</view>
+      <view class="voice-btn voice-discard" bind:tap="toggleRecord">重录</view>
+      <view class="voice-btn voice-discard" bind:tap="removeAudioUI">✕ 删除</view>
+    </block>
+  </view>
+
+  <button class="btn-main submit-btn" bind:tap="save" disabled="{{saved}}">保存修改</button>
+
+  <view class="lock-tip">tier（素描/烫金）不在此改：晋级只能走「去过之后回访确认」。</view>
+</view>

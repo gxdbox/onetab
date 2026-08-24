@@ -1,0 +1,7 @@
+node_modules/
+dist/
+miniprogram/**/*.js
+miniprogram/**/*.js.map
+cloudfunctions/**/node_modules/
+.DS_Store
+project.private.config.json

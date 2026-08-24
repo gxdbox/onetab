@@ -1,0 +1,339 @@
+.page {
+  padding: 40rpx 32rpx 180rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 回访卡 */
+.revisit {
+  padding: 28rpx 32rpx;
+  margin-bottom: 24rpx;
+}
+.revisit-q {
+  font-size: 32rpx;
+  margin-bottom: 20rpx;
+}
+.revisit-btns {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* 计数 */
+.counts {
+  display: flex;
+  justify-content: center;
+  padding: 24rpx 0;
+}
+.count {
+  margin: 0 24rpx;
+  font-size: 30rpx;
+}
+.archived-count {
+  color: #a3967f;
+}
+
+/* 可见筛选 chips [硬约束 #16] */
+.chips {
+  text-align: center;
+  margin-bottom: 8rpx;
+}
+.chip {
+  display: inline-block;
+  background: #efe3c8;
+  border: 2rpx solid #c9a24b;
+  color: #7a6230;
+  border-radius: 999rpx;
+  padding: 6rpx 20rpx;
+  font-size: 24rpx;
+  margin: 0 8rpx;
+}
+.chip-gold {
+  background: #f7e9c6;
+}
+.chips-tip {
+  font-size: 20rpx;
+  color: #a3967f;
+  margin-left: 8rpx;
+}
+
+/* 空态 */
+.empty {
+  margin-top: 160rpx;
+  text-align: center;
+}
+.empty-title {
+  font-size: 44rpx;
+}
+.empty-sub {
+  color: #8b8172;
+  margin: 24rpx 0 48rpx;
+}
+.empty-btn {
+  margin: 20rpx auto;
+  width: 70%;
+}
+
+/* 抽签主按钮 */
+.draw-area {
+  margin-top: 100rpx;
+  text-align: center;
+}
+.draw-btn {
+  width: 400rpx;
+  height: 400rpx;
+  border-radius: 50%;
+  margin: 0 auto;
+  background: radial-gradient(circle at 35% 30%, #fdf3d7, #e8cf8e);
+  border: 6rpx solid #c9a24b;
+  box-shadow: 0 10rpx 40rpx rgba(201, 162, 75, 0.35);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.draw-main {
+  font-size: 40rpx;
+  color: #5c4715;
+  font-weight: 700;
+}
+.draw-sub {
+  font-size: 22rpx;
+  color: #9c8555;
+  margin-top: 16rpx;
+}
+.drawer-toggle {
+  margin-top: 48rpx;
+  color: #8b8172;
+  font-size: 26rpx;
+  text-decoration: underline;
+}
+
+/* 记一个 */
+.fab {
+  position: fixed;
+  bottom: 60rpx;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 320rpx;
+  text-align: center;
+  background: #4a3f35;
+  color: #f6efe0;
+  border-radius: 999rpx;
+  padding: 22rpx 0;
+  font-size: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(74, 63, 53, 0.4);
+}
+
+/* 抽屉 */
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(60, 48, 35, 0.35);
+  z-index: 10;
+}
+.drawer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -100%;
+  transition: bottom 0.25s ease;
+  background: #fdf9ef;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 40rpx 32rpx 60rpx;
+  z-index: 11;
+}
+.drawer.open {
+  bottom: 0;
+}
+.drawer-title {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+.drawer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 24rpx 0;
+}
+.drawer-label {
+  width: 100%;
+  color: #8b8172;
+  font-size: 24rpx;
+  margin-bottom: 8rpx;
+}
+.chip-btn {
+  background: #f1ead9;
+  border: 2rpx solid #d8ccae;
+  color: #6b5f4c;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  padding: 8rpx 24rpx;
+  margin: 6rpx;
+  line-height: 1.6;
+}
+.chip-btn.on {
+  background: #f7e9c6;
+  border-color: #c9a24b;
+  color: #7a6230;
+  font-weight: 600;
+}
+.drawer-tip {
+  color: #a3967f;
+  font-size: 22rpx;
+  margin-top: 16rpx;
+}
+.drawer-link {
+  margin-top: 24rpx;
+  color: #9c8555;
+  font-size: 26rpx;
+  text-decoration: underline;
+}
+.chip-add {
+  border-style: dashed;
+}
+
+/* 朱砂皮肤：仪式感可磨损，提供最小幅度的更新空间 */
+.overlay.skin-cinnabar {
+  background: rgba(74, 34, 26, 0.85);
+}
+.overlay.skin-cinnabar .cycling {
+  color: #f3ded4;
+}
+.overlay.skin-cinnabar .result-close {
+  color: #d8b3a6;
+}
+.overlay.skin-cinnabar .sketch-card {
+  background: #efe5dd;
+}
+
+.memory {
+  padding: 28rpx 32rpx;
+  margin-bottom: 24rpx;
+  background: #faf3e3;
+  border-color: #e6d5ae;
+}
+.memory-title {
+  font-size: 24rpx;
+  color: #a3967f;
+}
+.memory-text {
+  margin-top: 10rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #6b5d4d;
+}
+
+/* 抽签 overlay */
+.overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(58, 47, 33, 0.78);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 60rpx;
+}
+.cycling {
+  color: #f6efe0;
+  font-size: 48rpx;
+  min-height: 80rpx;
+}
+.result-card {
+  width: 100%;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+.result-photo {
+  width: 100%;
+  height: 340rpx;
+  border-radius: 16rpx;
+}
+.result-emoji {
+  font-size: 120rpx;
+  margin: 40rpx 0;
+}
+.result-name {
+  font-size: 44rpx;
+  margin: 24rpx 0 8rpx;
+}
+.result-tier {
+  font-size: 24rpx;
+}
+.relaxed-note {
+  font-size: 22rpx;
+  color: #9c6b4a;
+  margin-bottom: 20rpx;
+}
+.result-btns {
+  margin-top: 48rpx;
+  width: 100%;
+}
+.result-btns .btn-main,
+.result-btns .btn-ghost {
+  margin: 16rpx 0;
+}
+.result-close {
+  color: #bfb39b;
+  font-size: 24rpx;
+  margin-top: 32rpx;
+  text-decoration: underline;
+}
+
+/* 诚实空态 */
+.empty-result {
+  width: 100%;
+  padding: 48rpx 40rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+.empty-result-title {
+  font-size: 34rpx;
+}
+.empty-result .empty-btn {
+  margin: 24rpx auto 0;
+  width: 80%;
+}
+
+/* 晋级动画：素描镀成烫金 [硬约束 #10] —— 全产品最重要的一个动画 */
+.gold-flash {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 30;
+  background: radial-gradient(circle, rgba(247, 224, 148, 0.96), rgba(201, 162, 75, 0.92));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: goldfade 2.2s ease forwards;
+}
+.gold-flash-inner {
+  font-size: 48rpx;
+  color: #5c4715;
+}
+@keyframes goldfade {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,148 @@
+.page {
+  padding: 48rpx 40rpx;
+}
+
+.field-label {
+  color: #8b8172;
+  font-size: 26rpx;
+  margin: 36rpx 0 16rpx;
+}
+.field-label:first-child {
+  margin-top: 0;
+}
+
+.name-input {
+  background: #fdf9ef;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 34rpx;
+}
+.placeholder {
+  color: #c4b99f;
+}
+
+.scene-chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+.chip-btn {
+  background: #f1ead9;
+  border: 2rpx solid #d8ccae;
+  color: #6b5f4c;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  padding: 10rpx 28rpx;
+  margin: 6rpx 12rpx 6rpx 0;
+  line-height: 1.6;
+}
+.chip-btn.on {
+  background: #f7e9c6;
+  border-color: #c9a24b;
+  color: #7a6230;
+  font-weight: 600;
+}
+
+.joy-row {
+  padding: 8rpx 0;
+}
+.star {
+  color: #d8cdb6;
+  font-size: 44rpx;
+  padding: 0 12rpx;
+}
+.star.on {
+  color: #c9a24b;
+}
+
+.note-area {
+  width: 100%;
+  box-sizing: border-box;
+  height: 140rpx;
+  background: #fdf9ef;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+}
+
+.photo-row {
+  display: flex;
+  align-items: center;
+}
+.photo-box {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 16rpx;
+  border: 2rpx dashed #c4b99f;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-preview {
+  width: 100%;
+  height: 100%;
+}
+.photo-empty {
+  font-size: 70rpx;
+  opacity: 0.5;
+}
+.media-ops {
+  margin-left: 28rpx;
+  display: flex;
+  flex-direction: column;
+}
+.op-btn {
+  font-size: 26rpx;
+  color: #a97e22;
+  border: 2rpx solid #e0cf9f;
+  border-radius: 999rpx;
+  padding: 8rpx 32rpx;
+  margin: 8rpx 0;
+  text-align: center;
+}
+.op-danger {
+  color: #b04a3a;
+  border-color: #dcb3a9;
+}
+
+.voice-row {
+  display: flex;
+}
+.voice-btn {
+  flex: 1;
+  margin: 0 8rpx;
+  padding: 20rpx 20rpx;
+  border: 2rpx dashed #cbbfa8;
+  border-radius: 16rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #6b5d4d;
+  box-sizing: border-box;
+}
+.voice-btn.recording {
+  border-color: #b04a3a;
+  color: #b04a3a;
+}
+.voice-done {
+  border-style: solid;
+  border-color: #c9a24b;
+  color: #a97e22;
+}
+.voice-discard {
+  flex: 0 0 150rpx;
+  color: #8b8172;
+}
+
+.submit-btn {
+  margin-top: 64rpx;
+}
+
+.lock-tip {
+  margin-top: 32rpx;
+  text-align: center;
+  color: #a3967f;
+  font-size: 22rpx;
+  line-height: 1.6;
+}

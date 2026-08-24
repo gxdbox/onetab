@@ -1,0 +1,139 @@
+<view class="page">
+  <!-- 回访晋级卡（留存引擎）[硬约束 #4] -->
+  <view wx:if="{{revisit}}" class="paper-panel revisit">
+    <view class="revisit-q serif">{{revisit.question}}</view>
+    <view class="revisit-btns">
+      <button class="btn-main btn-sm" bind:tap="revisitHappy">去了，开心</button>
+      <button class="btn-ghost btn-sm" bind:tap="revisitLater">还没去</button>
+      <button class="btn-ghost btn-sm" bind:tap="revisitSad">不太行</button>
+    </view>
+  </view>
+
+  <!-- 回忆时间线（V2）：一年前的今天 -->
+  <view wx:if="{{memory}}" class="paper-panel memory">
+    <view class="memory-title serif">🕰 {{memory.yearsAgo}}年前的今天</view>
+    <view class="memory-text">{{memory.text}}</view>
+  </view>
+
+  <!-- 册子计数：收集是主角 [P4] -->
+  <view class="counts">
+    <text class="count gold-badge" bind:tap="goList">✨ 烫金 {{verifiedCount}}</text>
+    <text class="count sketch-badge" bind:tap="goList">✏️ 素描 {{wishCount}}</text>
+    <text class="count archived-count" bind:tap="goArchive">🗄 抽屉 {{archivedCount}}</text>
+  </view>
+
+  <!-- 可见筛选 chips [硬约束 #16]：隐形的残留条件会让「0 个候选」看起来像程序坏了 -->
+  <view wx:if="{{hasActiveFilters}}" class="chips" bind:tap="clearFilters">
+    <text wx:if="{{mode === 'safe'}}" class="chip chip-gold">🛡 安全牌 ×</text>
+    <text wx:if="{{filterScene !== 'all'}}" class="chip">{{sceneLabel}} ×</text>
+    <text class="chips-tip">点击恢复默认</text>
+  </view>
+
+  <!-- 空态：空库是头号杀手 [硬约束 #11 #12] -->
+  <view wx:if="{{isEmpty}}" class="empty">
+    <view class="empty-title serif">册子还是空的</view>
+    <view class="empty-sub">想想上周让你嘴角上扬的一件小事</view>
+    <button class="btn-main empty-btn" bind:tap="goStarter">先翻翻灵感卡</button>
+    <button class="btn-ghost empty-btn" bind:tap="goDuel">心里已有答案？二选一</button>
+  </view>
+
+  <!-- 主流程：长按蓄力，闭眼一指。主流程上没有任何配置项 [硬约束 #2] -->
+  <view wx:else class="draw-area">
+    <view class="draw-btn" bind:longpress="onDraw" bind:tap="hintLongpress">
+      <view class="draw-main serif">帮我闭眼一指</view>
+      <view class="draw-sub">长按 1.5 秒 · 把选择权交出去</view>
+    </view>
+    <view class="drawer-toggle" bind:tap="openDrawer">筛选</view>
+  </view>
+
+  <view class="fab" bind:tap="goAdd">＋ 记一个</view>
+
+  <!-- 抽屉 [硬约束 #2]：所有筛选关在这里，不挡主流程 -->
+  <view wx:if="{{drawerOpen}}" class="mask" bind:tap="closeDrawer"></view>
+  <view class="drawer {{drawerOpen ? 'open' : ''}}">
+    <view class="drawer-title serif">筛选（都收在抽屉里）</view>
+    <view class="drawer-row">
+      <text class="drawer-label">模式</text>
+      <button class="chip-btn {{mode === 'pool' ? 'on' : ''}}" data-mode="pool" bind:tap="setMode">全池</button>
+      <button class="chip-btn {{mode === 'safe' ? 'on' : ''}}" data-mode="safe" bind:tap="setMode">🛡 安全牌</button>
+    </view>
+    <view class="drawer-row">
+      <text class="drawer-label">场景</text>
+      <button class="chip-btn {{filterScene === 'all' ? 'on' : ''}}" data-scene="all" bind:tap="setScene">全部</button>
+      <button
+        wx:for="{{scenes}}"
+        wx:key="id"
+        class="chip-btn {{filterScene === item.id ? 'on' : ''}}"
+        data-scene="{{item.id}}"
+        bind:tap="setScene"
+      >{{item.emoji}} {{item.label}}</button>
+      <!-- 自定义场景（最多一个）：给「遛娃」「摒猫」这类语境的窄门 -->
+      <button wx:if="{{!customScene}}" class="chip-btn chip-add" bind:tap="addCustomScene">＋ 自定义</button>
+      <button wx:else class="chip-btn chip-add" bind:tap="removeCustomScene">⭐ {{customScene.label}} ✕</button>
+    </view>
+    <view class="drawer-row">
+      <text class="drawer-label">仪式 · 时长</text>
+      <button
+        wx:for="{{durationOptions}}"
+        wx:key="key"
+        class="chip-btn {{ritual.duration === item.key ? 'on' : ''}}"
+        data-key="{{item.key}}"
+        bind:tap="setDuration"
+      >{{item.label}}</button>
+    </view>
+    <view class="drawer-row">
+      <text class="drawer-label">仪式 · 结果卡皮肤</text>
+      <button
+        wx:for="{{skinOptions}}"
+        wx:key="key"
+        class="chip-btn {{ritual.skin === item.key ? 'on' : ''}}"
+        data-key="{{item.key}}"
+        bind:tap="setSkin"
+      >{{item.label}}</button>
+    </view>
+    <view class="drawer-tip">安全牌只抽烫金条目——哪怕只剩两个，也不混入素描。</view>
+    <view class="drawer-link" bind:tap="goBackup">📖 备份与恢复</view>
+    <view class="drawer-link" bind:tap="goReport">🎁 年度快乐报告</view>
+  </view>
+
+  <!-- 抽签 overlay（皮肤：暖纸 / 朱砂） -->
+  <view wx:if="{{drawing || result || emptyResult}}" class="overlay {{ritual.skin === 'cinnabar' ? 'skin-cinnabar' : ''}}">
+    <view wx:if="{{drawing}}" class="cycling serif">{{cyclingName}}</view>
+
+    <block wx:if="{{result}}">
+      <view class="result-card {{result.treasure.tier === 'verified' ? 'gold-card' : 'sketch-card'}}">
+        <!-- [硬约束 #5] 只有真的换来新候选的放宽才出现在这里 -->
+        <view wx:if="{{result.relaxedText}}" class="relaxed-note">{{result.relaxedText}}</view>
+        <image wx:if="{{result.photo}}" class="result-photo" src="{{result.photo}}" mode="aspectFill" />
+        <view wx:else class="result-emoji">{{result.emoji}}</view>
+        <view class="result-name serif">{{result.treasure.name}}</view>
+        <view class="result-tier {{result.treasure.tier === 'verified' ? 'gold-badge' : 'sketch-badge'}}">
+          {{result.treasure.tier === 'verified' ? '✨ 安全牌' : '✏️ 心愿'}}
+        </view>
+      </view>
+      <view class="result-btns">
+        <button class="btn-main" bind:tap="accept">就它了</button>
+        <!-- [硬约束 #1] 用完即消失，只剩「就它了」 -->
+        <button wx:if="{{result.rerollable && rerollLeft > 0}}" class="btn-ghost" bind:tap="reroll">
+          再摇一次（剩 {{rerollLeft}} 次）
+        </button>
+      </view>
+      <view class="result-close" bind:tap="closeResult">先不抽了</view>
+    </block>
+
+    <!-- 诚实空态：绝不静默污染 [硬约束 #6] -->
+    <block wx:if="{{emptyResult}}">
+      <view class="empty-result paper-panel">
+        <view class="serif empty-result-title" wx:if="{{emptyResult === 'safe-empty'}}">册子里烫金的还不够……</view>
+        <view class="serif empty-result-title" wx:else>候选不够了，先收几个快乐进册子吧</view>
+        <button class="btn-main empty-btn" bind:tap="goAdd">去收集</button>
+        <button wx:if="{{emptyResult === 'safe-empty'}}" class="btn-ghost empty-btn" bind:tap="safeToPool">翻翻素描们</button>
+      </view>
+    </block>
+  </view>
+
+  <!-- 晋级动画：素描镀成烫金 [硬约束 #10] -->
+  <view wx:if="{{goldFlash}}" class="gold-flash">
+    <view class="gold-flash-inner serif">素描镀成了烫金 ✨</view>
+  </view>
+</view>

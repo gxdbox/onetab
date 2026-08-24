@@ -1,0 +1,54 @@
+<view class="page">
+  <view class="intro serif">心里已经有答案了？<text class="intro-sub">让册子当个裁判</text></view>
+
+  <view class="options">
+    <view wx:for="{{options}}" wx:key="index" class="option-row">
+      <view class="option-no serif">{{index === 0 ? '甲' : index === 1 ? '乙' : '丙'}}</view>
+      <input
+        class="option-input"
+        placeholder="{{index === 0 ? '比如：吃面' : index === 1 ? '比如：吃饭' : '第三个选项'}}"
+        placeholder-class="placeholder"
+        value="{{item}}"
+        data-i="{{index}}"
+        bindinput="onOption"
+        maxlength="20"
+      />
+    </view>
+    <view class="option-ops">
+      <text wx:if="{{options.length < 3}}" class="op-link" bind:tap="addOption">＋ 加一个</text>
+      <text wx:if="{{options.length > 2}}" class="op-link" bind:tap="removeOption">－ 减一个</text>
+    </view>
+  </view>
+
+  <!-- 翻牌裁决 -->
+  <view wx:if="{{flipping || result}}" class="verdict-area">
+    <view class="coin {{flipping ? 'flipping' : ''}}">
+      <view wx:if="{{flipping}}" class="coin-face">⚖️</view>
+      <view wx:else class="coin-face serif">就它</view>
+    </view>
+    <view wx:if="{{result}}" class="verdict serif">{{result}}</view>
+  </view>
+
+  <block wx:if="{{result}}">
+    <view class="save-area paper-panel">
+      <view class="save-label">顺手存进册子？</view>
+      <view class="scene-chips">
+        <button
+          wx:for="{{scenes}}"
+          wx:key="id"
+          class="chip-btn {{sceneId === item.id ? 'on' : ''}}"
+          data-scene="{{item.id}}"
+          bind:tap="pickScene"
+        >{{item.emoji}}</button>
+      </view>
+      <view class="save-btns">
+        <button class="btn-main save-btn" bind:tap="save" disabled="{{saved}}">收进册子</button>
+        <button class="btn-ghost save-btn" bind:tap="again">换个裁决</button>
+      </view>
+    </view>
+  </block>
+
+  <button wx:else class="btn-main judge-btn {{flipping ? 'disabled' : ''}}" bind:tap="judge" disabled="{{flipping}}">
+    让它裁决
+  </button>
+</view>

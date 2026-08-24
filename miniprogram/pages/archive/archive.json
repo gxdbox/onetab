@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "抽屉",
+  "usingComponents": {
+    "treasure-card": "/components/treasure-card/treasure-card"
+  }
+}

@@ -1,0 +1,56 @@
+<view class="page">
+  <!-- 唯一必填项：名字 -->
+  <view class="field-label serif">它叫什么</view>
+  <input
+    class="name-input serif"
+    placeholder="比如：楼下那家牛肉面"
+    placeholder-class="placeholder"
+    value="{{name}}"
+    bindinput="onName"
+    maxlength="20"
+    focus
+  />
+
+  <!-- 场景：默认已选中，可以完全不碰 [硬约束 #2] -->
+  <view class="field-label">场景</view>
+  <view class="scene-chips">
+    <button
+      wx:for="{{scenes}}"
+      wx:key="id"
+      class="chip-btn {{sceneId === item.id ? 'on' : ''}}"
+      data-scene="{{item.id}}"
+      bind:tap="pickScene"
+    >{{item.emoji}} {{item.label}}</button>
+  </view>
+
+  <!-- 照片：强烈鼓励但不强制 -->
+  <view class="field-label">顺手拍一张？（可跳过）</view>
+  <view class="photo-box" bind:tap="choosePhoto">
+    <image wx:if="{{photo}}" class="photo-preview" src="{{photo}}" mode="aspectFill" />
+    <view wx:else class="photo-empty">📷</view>
+  </view>
+
+  <!-- 语音速记（V2）：≤ 15s，说一句而不是录一段 -->
+  <view class="field-label">或者用说的？（15 秒以内，可跳过）</view>
+  <view class="voice-row">
+    <view wx:if="{{!audio}}" class="voice-btn {{recording ? 'recording' : ''}}" bind:tap="toggleRecord">
+      <text wx:if="{{!recording}}">🎤 说一句</text>
+      <block wx:else>⏺ 录音中 {{recordSecs}}s / 15s · 点击停止</block>
+    </view>
+    <block wx:else>
+      <view class="voice-btn voice-done" bind:tap="playAudio">▶︎ 试听一下</view>
+      <view class="voice-btn voice-discard" bind:tap="discardAudio">✕ 重录</view>
+    </block>
+  </view>
+
+  <button class="btn-main submit-btn" bind:tap="submit" disabled="{{saved}}">收进册子</button>
+
+  <!-- 停留 1.5 秒：快乐被强化一次 -->
+  <view wx:if="{{saved}}" class="saved-overlay">
+    <view class="saved-card sketch-card">
+      <view class="saved-emoji">✏️</view>
+      <view class="saved-name serif">{{savedName}}</view>
+      <view class="saved-sub">收进册子了，先去做它，回来给它烫金</view>
+    </view>
+  </view>
+</view>

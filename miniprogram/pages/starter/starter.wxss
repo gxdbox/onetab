@@ -1,0 +1,62 @@
+.page {
+  padding: 32rpx 32rpx 60rpx;
+}
+
+.intro {
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+.intro-title {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+.intro-sub {
+  font-size: 24rpx;
+  color: #8b8172;
+  margin-top: 12rpx;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.starter-card {
+  width: 48%;
+  box-sizing: border-box;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 20rpx;
+  text-align: center;
+  position: relative;
+}
+.starter-card.adopted {
+  opacity: 0.55;
+}
+
+.sc-emoji {
+  font-size: 56rpx;
+}
+.sc-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-top: 12rpx;
+}
+.sc-why {
+  font-size: 22rpx;
+  color: #8b8172;
+  margin-top: 8rpx;
+  line-height: 1.5;
+}
+.sc-adopted {
+  position: absolute;
+  top: 12rpx;
+  right: 16rpx;
+  font-size: 22rpx;
+  color: #a97e22;
+}
+
+.done-btn {
+  margin-top: 32rpx;
+}

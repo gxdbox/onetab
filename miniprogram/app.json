@@ -1,0 +1,23 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/add/add",
+    "pages/list/list",
+    "pages/duel/duel",
+    "pages/starter/starter",
+    "pages/archive/archive",
+    "pages/backup/backup",
+    "pages/report/report",
+    "pages/edit/edit"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#f6efe0",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "指到你了",
+    "backgroundColor": "#f6efe0",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,56 @@
+<view class="page">
+  <block wx:if="{{report && report.hasData}}">
+    <view class="cover">
+      <view class="cover-year serif">{{year}}</view>
+      <view class="cover-title serif">快乐年报</view>
+      <view class="cover-sub">收集过的快乐，都算数</view>
+    </view>
+
+    <!-- 大数字 -->
+    <view class="paper-panel stats">
+      <view class="stat">
+        <view class="stat-num serif">{{report.collected}}</view>
+        <view class="stat-label">条小确幸</view>
+      </view>
+      <view class="stat">
+        <view class="stat-num serif gold-badge">{{report.verified}}</view>
+        <view class="stat-label">次烫金</view>
+      </view>
+      <view class="stat">
+        <view class="stat-num serif">{{report.drawn}}</view>
+        <view class="stat-label">次闭眼一指</view>
+      </view>
+    </view>
+
+    <!-- 起点 -->
+    <view wx:if="{{report.firstOf}}" class="paper-panel line">
+      <view class="line-title serif">这一切从「{{report.firstOf.name}}」开始</view>
+    </view>
+
+    <!-- 最常被指到 -->
+    <view wx:if="{{report.topDraw}}" class="paper-panel line">
+      <view class="line-title serif">最常被指到的是「{{report.topDraw.name}}」</view>
+      <view class="line-sub">它替你做了 {{report.topDraw.count}} 次决定</view>
+    </view>
+
+    <!-- 场景分布：一根根纸条，不是仪表盘 -->
+    <view wx:if="{{report.sceneBars.length}}" class="paper-panel line">
+      <view class="line-title serif">快乐都藏在哪儿</view>
+      <view wx:for="{{report.sceneBars}}" wx:key="sceneId" class="bar-row">
+        <text class="bar-label">{{item.emoji}} {{item.label}}</text>
+        <view class="bar-track">
+          <view class="bar-fill" style="width: {{item.count / report.sceneBars[0].count * 100}}%"></view>
+        </view>
+        <text class="bar-num">{{item.count}}</text>
+      </view>
+    </view>
+
+    <view class="foot">截图保存这份纪念 · 明年再见</view>
+  </block>
+
+  <!-- 空态：安静，不硬凑 -->
+  <view wx:else class="paper-panel empty">
+    <view class="empty-title serif">{{year}} 的册子还是新的</view>
+    <view class="empty-sub">先去收集几件小确幸，年底回来，这里会替你记得。</view>
+  </view>
+</view>

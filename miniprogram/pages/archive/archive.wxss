@@ -1,0 +1,24 @@
+.page {
+  padding: 32rpx 32rpx 60rpx;
+}
+
+.empty {
+  margin-top: 200rpx;
+  text-align: center;
+}
+.empty-title {
+  font-size: 40rpx;
+}
+.empty-sub {
+  color: #8b8172;
+  margin-top: 20rpx;
+}
+
+.archived-item {
+  margin-bottom: 32rpx;
+}
+.ops {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -8rpx;
+}

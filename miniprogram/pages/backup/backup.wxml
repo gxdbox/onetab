@@ -1,0 +1,28 @@
+<view class="page">
+  <!-- 导出 -->
+  <view class="paper-panel section">
+    <view class="section-title serif">导出册子</view>
+    <view class="section-sub">当前 {{treasureCount}} 条小确幸。备份 JSON 不含照片本体（照片存在本机），只带引用——换新手机后重拍也是一种纪念。</view>
+    <view class="btns">
+      <button class="btn-main btn" bind:tap="copyExport">复制到剪贴板</button>
+      <button class="btn-ghost btn" bind:tap="shareExport">存成文件分享</button>
+    </view>
+  </view>
+
+  <!-- 导入 -->
+  <view class="paper-panel section">
+    <view class="section-title serif">恢复（合并，不覆盖）</view>
+    <view class="section-sub">粘贴之前导出的 JSON。按「最后修改时间」取较新的一版，两边都有的条目一个都不会丢。</view>
+    <textarea
+      class="import-area"
+      placeholder="把备份 JSON 粘贴到这里…"
+      placeholder-class="placeholder"
+      value="{{importText}}"
+      bindinput="onImportInput"
+      maxlength="-1"
+    />
+    <button class="btn-main btn" bind:tap="doImport">合并进册子</button>
+  </view>
+
+  <view class="foot-tip">本地优先：这些数据都存在你的手机里 [硬约束 #14]。云同步是以后的事，且随时可拔。</view>
+</view>

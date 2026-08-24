@@ -1,0 +1,82 @@
+/**
+ * 纸感暖色 · 私密收藏册 —— 不是效率工具 [硬约束 #10]
+ * 刻意拒绝：深色科技风、渐变霓虹、大圆角阴影的「现代 App 风」。
+ * 用户应该觉得自己在翻开一本私藏的册子，而不是打开一个工具。
+ */
+page {
+  background: #f6efe0;
+  color: #4a3f35;
+  font-size: 28rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+.serif {
+  font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+}
+
+/* 纸面板 */
+.paper-panel {
+  background: #fdf9ef;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 20rpx;
+  box-shadow: 4rpx 6rpx 0 rgba(160, 130, 80, 0.12);
+}
+
+/* 烫金（verified 安全牌）—— 已验证的快乐是收藏品，值得贵金属的仪式感 */
+.gold-card {
+  background: linear-gradient(135deg, #fdf6e3 0%, #f7e9c6 100%);
+  border: 3rpx solid #c9a24b;
+  box-shadow: 0 0 14rpx rgba(201, 162, 75, 0.45);
+}
+.gold-badge {
+  color: #a97e22;
+  font-weight: 600;
+}
+
+/* 素描（wish 心愿）—— 还没被生活盖章的期待，轻盈、未完成 */
+.sketch-card {
+  background: #f4f1ea;
+  border: 2rpx dashed #9a8f80;
+}
+.sketch-badge {
+  color: #8b8172;
+}
+
+/* 归档 —— 抽屉里的旧明信片，微微泛黄 */
+.archived-card {
+  filter: grayscale(0.8) sepia(0.25);
+  opacity: 0.85;
+}
+
+/* 按钮 */
+.btn-main {
+  background: #c9a24b;
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+.btn-ghost {
+  background: transparent;
+  color: #8b8172;
+  border: 2rpx solid #cbbfa8;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+}
+.btn-sm {
+  font-size: 26rpx;
+  padding: 8rpx 28rpx;
+  display: inline-block;
+  line-height: 1.8;
+  margin: 0 10rpx;
+}
+
+/* 星级 —— joy 是加权抽签的输入 [硬约束 #3]，不是排行榜 */
+.star {
+  color: #d8cdb6;
+  font-size: 30rpx;
+  padding: 0 4rpx;
+}
+.star.on {
+  color: #c9a24b;
+}

@@ -1,0 +1,17 @@
+<view class="page">
+  <view wx:if="{{items.length === 0}}" class="empty">
+    <view class="empty-title serif">抽屉是空的</view>
+    <view class="empty-sub">过时的快乐会收进这里，随时可以放回册子</view>
+  </view>
+
+  <block wx:for="{{items}}" wx:key="treasure.id">
+    <view class="archived-item">
+      <treasure-card treasure="{{item.treasure}}" photo="{{item.photo}}" archived />
+      <view class="ops">
+        <button class="btn-main btn-sm" data-id="{{item.treasure.id}}" bind:tap="restore">放回册子</button>
+        <button class="btn-ghost btn-sm" data-id="{{item.treasure.id}}" bind:tap="goEdit">✏️ 修改</button>
+        <button class="btn-ghost btn-sm" data-id="{{item.treasure.id}}" bind:tap="removeHard">彻底删除</button>
+      </view>
+    </view>
+  </block>
+</view>

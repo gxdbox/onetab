@@ -1,0 +1,51 @@
+.page {
+  padding: 32rpx 32rpx 60rpx;
+}
+
+.section {
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.section-sub {
+  font-size: 24rpx;
+  color: #8b8172;
+  margin: 16rpx 0 28rpx;
+  line-height: 1.6;
+}
+
+.btns {
+  display: flex;
+}
+.btn {
+  flex: 1;
+  margin: 0 10rpx;
+  font-size: 28rpx;
+}
+
+.import-area {
+  width: 100%;
+  box-sizing: border-box;
+  height: 240rpx;
+  background: #f6efe0;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  font-size: 24rpx;
+  margin-bottom: 24rpx;
+}
+.placeholder {
+  color: #c4b99f;
+}
+
+.foot-tip {
+  text-align: center;
+  color: #a3967f;
+  font-size: 22rpx;
+  line-height: 1.6;
+}

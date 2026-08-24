@@ -1,0 +1,76 @@
+.card {
+  border-radius: 20rpx;
+  padding: 20rpx;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.photo {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 14rpx;
+  flex-shrink: 0;
+}
+
+.photo-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64rpx;
+  background: rgba(160, 130, 80, 0.08);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  margin-left: 24rpx;
+}
+
+.name {
+  font-size: 32rpx;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+}
+
+.stars {
+  display: flex;
+}
+
+.not-today {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #9c6b4a;
+}
+
+.audio-btn {
+  margin-top: 10rpx;
+  display: inline-block;
+  font-size: 22rpx;
+  color: #a97e22;
+  border: 2rpx solid #e0cf9f;
+  border-radius: 999rpx;
+  padding: 4rpx 18rpx;
+}
+.audio-btn.playing {
+  background: #f7e9c6;
+}
+
+.note {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #8b8172;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

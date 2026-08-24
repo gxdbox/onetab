@@ -1,0 +1,138 @@
+.page {
+  padding: 48rpx 40rpx;
+}
+
+.field-label {
+  color: #8b8172;
+  font-size: 26rpx;
+  margin: 36rpx 0 16rpx;
+}
+.field-label:first-child {
+  margin-top: 0;
+}
+
+.name-input {
+  background: #fdf9ef;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 34rpx;
+}
+.placeholder {
+  color: #c4b99f;
+}
+
+.scene-chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+.chip-btn {
+  background: #f1ead9;
+  border: 2rpx solid #d8ccae;
+  color: #6b5f4c;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  padding: 10rpx 28rpx;
+  margin: 6rpx 12rpx 6rpx 0;
+  line-height: 1.6;
+}
+.chip-btn.on {
+  background: #f7e9c6;
+  border-color: #c9a24b;
+  color: #7a6230;
+  font-weight: 600;
+}
+
+.photo-box {
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 16rpx;
+  border: 2rpx dashed #c4b99f;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-preview {
+  width: 100%;
+  height: 100%;
+}
+.photo-empty {
+  font-size: 80rpx;
+  opacity: 0.5;
+}
+
+.submit-btn {
+  margin-top: 64rpx;
+}
+
+/* 语音速记（V2） */
+.voice-row {
+  display: flex;
+}
+.voice-btn {
+  flex: 1;
+  margin: 0 8rpx;
+  padding: 20rpx 24rpx;
+  border: 2rpx dashed #cbbfa8;
+  border-radius: 16rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #6b5d4d;
+  box-sizing: border-box;
+}
+.voice-btn.recording {
+  border-color: #b04a3a;
+  color: #b04a3a;
+}
+.voice-done {
+  border-style: solid;
+  border-color: #c9a24b;
+  color: #a97e22;
+}
+.voice-discard {
+  flex: 0 0 180rpx;
+  color: #8b8172;
+}
+
+/* 收进册子的 1.5 秒 */
+.saved-overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(58, 47, 33, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+.saved-card {
+  width: 70%;
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx;
+  text-align: center;
+  animation: flyin 0.4s ease;
+}
+.saved-emoji {
+  font-size: 80rpx;
+}
+.saved-name {
+  font-size: 40rpx;
+  margin: 20rpx 0 12rpx;
+}
+.saved-sub {
+  font-size: 24rpx;
+  color: #8b8172;
+}
+@keyframes flyin {
+  from {
+    transform: translateY(60rpx) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

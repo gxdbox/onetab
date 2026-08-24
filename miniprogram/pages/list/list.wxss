@@ -1,0 +1,49 @@
+.page {
+  padding: 32rpx 32rpx 180rpx;
+}
+
+.empty {
+  margin-top: 200rpx;
+  text-align: center;
+}
+.empty-title {
+  font-size: 40rpx;
+}
+.empty-sub {
+  color: #8b8172;
+  margin: 20rpx 0 40rpx;
+}
+.empty-btn {
+  margin: 0 auto;
+  width: 60%;
+}
+
+.group-title {
+  font-size: 30rpx;
+  color: #7a6230;
+  margin: 32rpx 4rpx 20rpx;
+  font-weight: 600;
+}
+
+.tip {
+  text-align: center;
+  color: #a3967f;
+  font-size: 22rpx;
+  margin-top: 32rpx;
+}
+
+.fab {
+  position: fixed;
+  bottom: 60rpx;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 320rpx;
+  text-align: center;
+  background: #4a3f35;
+  color: #f6efe0;
+  border-radius: 999rpx;
+  padding: 22rpx 0;
+  font-size: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(74, 63, 53, 0.4);
+}

@@ -1,0 +1,27 @@
+<view
+  class="card {{treasure.tier === 'verified' ? 'gold-card' : 'sketch-card'}} {{archived ? 'archived-card' : ''}}"
+  bind:longpress="onLong"
+>
+  <image wx:if="{{photo && photoOk}}" class="photo" src="{{photo}}" mode="aspectFill" binderror="onImgError" />
+  <view wx:else class="photo photo-emoji">{{emoji}}</view>
+  <view class="body">
+    <view class="name serif">{{treasure.name}}</view>
+    <view class="meta">
+      <text class="{{treasure.tier === 'verified' ? 'gold-badge' : 'sketch-badge'}}">
+        {{treasure.tier === 'verified' ? '✨ 烫金' : '✏️ 素描'}}
+      </text>
+      <view class="stars" wx:if="{{!archived}}">
+        <text
+          wx:for="{{[1, 2, 3, 4, 5]}}"
+          wx:key="*this"
+          class="star {{item <= treasure.joy ? 'on' : ''}}"
+          data-v="{{item}}"
+          catch:tap="onJoy"
+        >{{item <= treasure.joy ? '★' : '☆'}}</text>
+      </view>
+    </view>
+    <view wx:if="{{treasure.audioRef}}" class="audio-btn {{audioPlaying ? 'playing' : ''}}" catch:tap="onAudio">{{audioPlaying ? '⏸ 播放中' : '🎧 听一句'}}</view>
+    <view wx:if="{{treasure.note}}" class="note">「{{treasure.note}}」</view>
+    <view wx:if="{{isNotToday}}" class="not-today">🙅 今天不想</view>
+  </view>
+</view>

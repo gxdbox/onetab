@@ -1,0 +1,142 @@
+.page {
+  padding: 48rpx 40rpx;
+}
+
+.intro {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+.intro-sub {
+  font-size: 26rpx;
+  color: #8b8172;
+  margin-left: 16rpx;
+  font-weight: 400;
+}
+
+.options {
+  margin-top: 40rpx;
+}
+.option-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.option-no {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #efe3c8;
+  border: 2rpx solid #c9a24b;
+  color: #7a6230;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  flex-shrink: 0;
+}
+.option-input {
+  flex: 1;
+  margin-left: 20rpx;
+  background: #fdf9ef;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  font-size: 30rpx;
+}
+.placeholder {
+  color: #c4b99f;
+}
+.option-ops {
+  text-align: right;
+}
+.op-link {
+  color: #9c8555;
+  font-size: 26rpx;
+  margin-left: 24rpx;
+  text-decoration: underline;
+}
+
+/* 翻牌 */
+.verdict-area {
+  margin-top: 48rpx;
+  text-align: center;
+}
+.coin {
+  width: 180rpx;
+  height: 180rpx;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fdf3d7, #e8cf8e);
+  border: 5rpx solid #c9a24b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.coin.flipping {
+  animation: flip 1.2s ease;
+}
+.coin-face {
+  font-size: 56rpx;
+  color: #5c4715;
+  font-weight: 700;
+}
+@keyframes flip {
+  from {
+    transform: rotateY(0);
+  }
+  to {
+    transform: rotateY(1800deg);
+  }
+}
+.verdict {
+  margin-top: 32rpx;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #5c4715;
+}
+
+/* 存进册子 */
+.save-area {
+  margin-top: 48rpx;
+  padding: 32rpx;
+}
+.save-label {
+  color: #8b8172;
+  font-size: 26rpx;
+  margin-bottom: 16rpx;
+}
+.scene-chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+.chip-btn {
+  background: #f1ead9;
+  border: 2rpx solid #d8ccae;
+  color: #6b5f4c;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  padding: 8rpx 24rpx;
+  margin: 6rpx 12rpx 6rpx 0;
+  line-height: 1.6;
+}
+.chip-btn.on {
+  background: #f7e9c6;
+  border-color: #c9a24b;
+  color: #7a6230;
+  font-weight: 600;
+}
+.save-btns {
+  display: flex;
+  margin-top: 24rpx;
+}
+.save-btn {
+  flex: 1;
+  margin: 0 10rpx;
+}
+
+.judge-btn {
+  margin-top: 64rpx;
+}
+.judge-btn.disabled {
+  opacity: 0.6;
+}

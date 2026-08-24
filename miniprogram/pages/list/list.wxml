@@ -1,0 +1,24 @@
+<view class="page">
+  <view wx:if="{{total === 0}}" class="empty">
+    <view class="empty-title serif">册子还是空的</view>
+    <view class="empty-sub">收集是主角，抽签只是彩蛋</view>
+    <button class="btn-main empty-btn" bind:tap="goAdd">＋ 记第一个快乐</button>
+  </view>
+
+  <block wx:for="{{groups}}" wx:key="scene.id" wx:for-item="group">
+    <view class="group-title serif">{{group.scene.emoji}} {{group.scene.label}}</view>
+    <treasure-card
+      wx:for="{{group.items}}"
+      wx:key="treasure.id"
+      treasure="{{item.treasure}}"
+      photo="{{item.photo}}"
+      data-id="{{item.treasure.id}}"
+      bind:joy="onJoy"
+      bind:cardlong="onCardLong"
+    />
+  </block>
+
+  <view class="tip" wx:if="{{total > 0}}">点星星改开心程度 · 长按卡片整理</view>
+
+  <view class="fab" bind:tap="goAdd">＋ 记一个</view>
+</view>

@@ -1,0 +1,23 @@
+<view class="page">
+  <view class="intro">
+    <view class="intro-title serif">看到心动的，点一下收走</view>
+    <view class="intro-sub">它们只是灵感（素描）——做过之后开心，才会烫金</view>
+  </view>
+
+  <view class="grid">
+    <view
+      wx:for="{{cards}}"
+      wx:key="name"
+      class="starter-card sketch-card {{adopted.indexOf(item.name) >= 0 ? 'adopted' : ''}}"
+      data-i="{{index}}"
+      bind:tap="adopt"
+    >
+      <view class="sc-emoji">{{item.emoji}}</view>
+      <view class="sc-name serif">{{item.name}}</view>
+      <view class="sc-why">{{item.why}}</view>
+      <view wx:if="{{adopted.indexOf(item.name) >= 0}}" class="sc-adopted">✓ 已收走</view>
+    </view>
+  </view>
+
+  <button class="btn-main done-btn" bind:tap="done">好了，去翻翻册子（已收 {{adopted.length}} 张）</button>
+</view>
