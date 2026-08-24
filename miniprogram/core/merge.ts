@@ -11,6 +11,9 @@
  */
 import { DrawRecord, Promotion, Treasure } from './types';
 
+/** 每件小确幸最多几张照片 [硬约束 #15] —— 与 PWA 版 MAX_PHOTOS_PER_ITEM 一致 */
+export const MAX_PHOTOS = 3;
+
 export interface MergeReport {
   added: number;
   updated: number;
@@ -73,6 +76,17 @@ function str(v: unknown): string | null {
   return typeof v === 'string' && v.length > 0 ? v : null;
 }
 
+/** 照片引用数组：只保留非空字符串、去重、最多 3 张 [硬约束 #15] */
+function normalizePhotos(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const out: string[] = [];
+  for (const v of raw) {
+    if (typeof v === 'string' && v && !out.includes(v)) out.push(v);
+    if (out.length >= MAX_PHOTOS) break;
+  }
+  return out;
+}
+
 export function normalizeTreasure(raw: unknown, now: number): Treasure | null {
   if (!raw || typeof raw !== 'object') return null;
   const r = raw as Record<string, unknown>;
@@ -85,7 +99,7 @@ export function normalizeTreasure(raw: unknown, now: number): Treasure | null {
     sceneId,
     tier: r.tier === 'verified' ? 'verified' : 'wish',
     joy: typeof r.joy === 'number' ? Math.min(5, Math.max(1, Math.round(r.joy))) : 3,
-    photoRef: str(r.photoRef), // [硬约束 #15] 导出 JSON 不含照片本体，只有引用
+    photos: normalizePhotos(r.photos), // [硬约束 #15] 导出 JSON 不含照片本体，只有引用
     audioRef: str(r.audioRef), // [硬约束 #15] 同上：语音也不带本体
     note: note ? note.slice(0, 50) : undefined,
     notToday: typeof r.notToday === 'number' ? r.notToday : null,

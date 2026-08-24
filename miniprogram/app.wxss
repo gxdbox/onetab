@@ -24,7 +24,14 @@ page {
 
 /* 烫金（verified 安全牌）—— 已验证的快乐是收藏品，值得贵金属的仪式感 */
 .gold-card {
-  background: linear-gradient(135deg, #fdf6e3 0%, #f7e9c6 100%);
+  background-image: linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0) 32%,
+      rgba(255, 255, 255, 0.45) 52%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    linear-gradient(135deg, #fdf6e3 0%, #f7e9c6 100%);
   border: 3rpx solid #c9a24b;
   box-shadow: 0 0 14rpx rgba(201, 162, 75, 0.45);
 }

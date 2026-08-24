@@ -1,11 +1,14 @@
 /**
  * 照片独立存储 [硬约束 #15]
  *
- * 照片压缩后存独立文件目录，主表只存 photoRef（文件路径）。
+ * 照片压缩后存独立文件目录，主表只存 photos 引用（文件路径数组）。
  * 原因：更新整行会重写数据——每次改星级/归档都拖着重写一遍照片，列表页会肉眼可见地卡。
  * （浏览器环境对应形态：独立的 Dexie 表，导出 JSON 不带 Blob 只带 id——见 V1.5 导出。）
  */
 import { newId } from '../core/id';
+
+/** 每件小确幸最多几张照片 [硬约束 #15] —— 与 PWA 版 MAX_PHOTOS_PER_ITEM 一致 */
+export const MAX_PHOTOS_PER_ITEM = 3;
 
 function photoDir(): string {
   return `${wx.env.USER_DATA_PATH}/photos`;
@@ -48,4 +51,9 @@ export function removePhoto(ref?: string | null): void {
   } catch {
     // 文件不存在则忽略
   }
+}
+
+/** 批量删除照片文件（编辑页「摘掉 N 张」用）。与 justThisOne 一致：先摘引用再删文件。 */
+export function removePhotos(refs: Array<string | null | undefined>): void {
+  for (const ref of refs) removePhoto(ref);
 }

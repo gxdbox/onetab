@@ -227,7 +227,7 @@ Page({
         cyclingName: '',
         result: {
           treasure: res.treasure,
-          photo: photoPath(res.treasure.photoRef),
+          photo: photoPath(res.treasure.photos?.[0]), // 首张作卡片背景
           emoji: sceneOf(res.treasure.sceneId).emoji,
           relaxedText: res.relaxed.map(l => RELAX_TEXT[l]).join('；'),
           relaxed: res.relaxed,

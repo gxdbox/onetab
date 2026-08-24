@@ -41,16 +41,13 @@
     maxlength="50"
   />
 
-  <view class="field-label">照片</view>
-  <view class="photo-row">
-    <view class="photo-box" bind:tap="changePhoto">
-      <image wx:if="{{photo}}" class="photo-preview" src="{{photo}}" mode="aspectFill" />
-      <view wx:else class="photo-empty">📷</view>
+  <view class="field-label">照片（最多 {{photos.length}}/3）</view>
+  <view class="photo-grid">
+    <view wx:for="{{photos}}" wx:key="*this" class="photo-box">
+      <image class="photo-preview" src="{{item}}" mode="aspectFill" />
+      <view class="photo-remove" catch:tap="removePhotoAt" data-i="{{index}}">✕</view>
     </view>
-    <view wx:if="{{photo}}" class="media-ops">
-      <view class="op-btn" bind:tap="changePhoto">换一张</view>
-      <view class="op-btn op-danger" bind:tap="removePhotoUI">移除</view>
-    </view>
+    <view wx:if="{{photos.length < 3}}" class="photo-box photo-add" bind:tap="addPhoto">📷</view>
   </view>
 
   <view class="field-label">语音（15 秒以内）</view>

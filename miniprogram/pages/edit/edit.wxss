@@ -66,13 +66,16 @@
   font-size: 28rpx;
 }
 
-.photo-row {
+/* 照片网格（≤3 张）—— 与 add 页一致 */
+.photo-grid {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
 }
 .photo-box {
+  position: relative;
   width: 200rpx;
   height: 200rpx;
+  margin: 0 16rpx 16rpx 0;
   border-radius: 16rpx;
   border: 2rpx dashed #c4b99f;
   overflow: hidden;
@@ -84,27 +87,25 @@
   width: 100%;
   height: 100%;
 }
-.photo-empty {
-  font-size: 70rpx;
-  opacity: 0.5;
-}
-.media-ops {
-  margin-left: 28rpx;
+.photo-remove {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 24rpx;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
 }
-.op-btn {
-  font-size: 26rpx;
-  color: #a97e22;
-  border: 2rpx solid #e0cf9f;
-  border-radius: 999rpx;
-  padding: 8rpx 32rpx;
-  margin: 8rpx 0;
-  text-align: center;
-}
-.op-danger {
-  color: #b04a3a;
-  border-color: #dcb3a9;
+.photo-add {
+  border-style: dashed;
+  font-size: 60rpx;
+  opacity: 0.6;
 }
 
 .voice-row {

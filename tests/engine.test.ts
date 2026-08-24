@@ -19,7 +19,7 @@ function t(p: Partial<Treasure> = {}): Treasure {
     sceneId: 'eat',
     tier: 'wish',
     joy: 3,
-    photoRef: null,
+    photos: [],
     notToday: null,
     status: 'active',
     source: 'self',

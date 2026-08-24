@@ -7,7 +7,8 @@
  */
 import { repo } from '../../data/repo';
 import { getSceneChips, getCustomScene } from '../../data/prefs';
-import { savePhoto, removePhoto } from '../../photos/photoStore';
+import { savePhoto, removePhotos } from '../../photos/photoStore';
+import { MAX_PHOTOS } from '../../core/merge';
 import { VOICE_MAX_MS, saveAudio, removeAudio } from '../../audio/audioStore';
 import { Treasure } from '../../core/types';
 import { sceneOf } from '../../core/scenes';
@@ -26,15 +27,17 @@ Page({
     scenes: [] as ReturnType<typeof getSceneChips>,
     joy: 3,
     note: '',
-    photo: '',
+    photos: [] as string[],
     recording: false,
     recordSecs: 0,
     audio: '',
     saved: false,
   },
 
-  // 暂存的原始引用：保存时用来决定「删旧文件」；放弃时用来「删新文件」
-  _origPhotoRef: null as string | null,
+  // 原始引用快照（加载时）：保存时用来决定「删哪些被摘掉的旧文件」；放弃时用来「删本次新文件」
+  _origPhotos: [] as string[],
+  // 本次被摘掉、等保存成功后才真正删文件的旧照片
+  _pendingRemove: [] as string[],
   _origAudioRef: null as string | null,
 
   onLoad(query: Record<string, string>) {
@@ -48,7 +51,8 @@ Page({
       setTimeout(() => wx.navigateBack(), 600);
       return;
     }
-    this._origPhotoRef = t.photoRef;
+    this._origPhotos = t.photos ?? [];
+    this._pendingRemove = [];
     this._origAudioRef = t.audioRef ?? null;
     this.setData({
       id: t.id,
@@ -56,7 +60,7 @@ Page({
       sceneId: t.sceneId,
       joy: t.joy,
       note: t.note || '',
-      photo: t.photoRef || '',
+      photos: [...this._origPhotos],
       audio: t.audioRef || '',
     });
     this.refreshScenes();
@@ -85,25 +89,44 @@ Page({
     this.setData({ joy: Number(e.currentTarget.dataset.v) });
   },
 
-  // ---------- 照片：换 / 删 ----------
+  // ---------- 照片（≤3 张）：加 / 摘 ----------
 
-  async changePhoto() {
+  async addPhoto() {
+    const remaining = MAX_PHOTOS - this.data.photos.length;
+    if (remaining <= 0) return;
     try {
       const res = await wx.chooseMedia({
-        count: 1,
+        count: remaining,
         mediaType: ['image'],
         sizeType: ['compressed'],
       });
-      const temp = res.tempFiles[0].tempFilePath;
-      const ref = await savePhoto(temp); // [硬约束 #15] 压缩 + 独立目录
-      this.setData({ photo: ref }); // 旧文件等「保存」成功后再删
+      // 逐张顺序压缩保存，追加后截断到 ≤3
+      let photos = [...this.data.photos];
+      for (const f of res.tempFiles) {
+        const ref = await savePhoto(f.tempFilePath); // [硬约束 #15] 压缩 + 独立目录
+        photos.push(ref);
+        if (photos.length >= MAX_PHOTOS) break;
+      }
+      this.setData({ photos: photos.slice(0, MAX_PHOTOS) });
     } catch {
       // 用户取消
     }
   },
 
-  removePhotoUI() {
-    this.setData({ photo: '' });
+  removePhotoAt(e: WechatMiniprogram.TouchEvent) {
+    const i = Number(e.currentTarget.dataset.i);
+    const photos = [...this.data.photos];
+    const [ref] = photos.splice(i, 1);
+    if (!ref) return;
+    // 先摘引用再删文件，绝不留孤儿
+    if (this._origPhotos.includes(ref)) {
+      // 旧照片：等「保存」成功后才真正删文件（放弃则保留，改错可还原）
+      this._pendingRemove.push(ref);
+    } else {
+      // 本次新加的照片：立即删文件
+      removePhotos([ref]);
+    }
+    this.setData({ photos });
   },
 
   // ---------- 语音：重录 / 删 ----------
@@ -164,18 +187,17 @@ Page({
       wx.showToast({ title: '名字不能为空', icon: 'none' });
       return;
     }
-    const newPhotoRef = this.data.photo || null;
     const newAudioRef = this.data.audio || null;
     repo.update(this.data.id, {
       name,
       sceneId: this.data.sceneId,
       joy: this.data.joy,
       note: this.data.note,
-      photoRef: newPhotoRef,
+      photos: this.data.photos,
       audioRef: newAudioRef,
     });
-    // 保存成功后才删被替换下来的旧文件
-    if (this._origPhotoRef && this._origPhotoRef !== newPhotoRef) removePhoto(this._origPhotoRef);
+    // 保存成功后才删被摘掉的旧照片文件（先摘引用再删文件，绝不留孤儿）
+    if (this._pendingRemove.length > 0) removePhotos(this._pendingRemove);
     if (this._origAudioRef && this._origAudioRef !== newAudioRef) removeAudio(this._origAudioRef);
     this.setData({ saved: true });
     wx.showToast({ title: '改好了', icon: 'success' });
@@ -188,9 +210,10 @@ Page({
       secsTimer = null;
     }
     if (this.data.recording) recorder?.stop();
-    // 放弃编辑：清掉本次新产生、且没有入库的媒体文件，不留孤儿
+    // 放弃编辑：清掉本次新产生、且没有入库的照片文件，不留孤儿（旧照片原样保留）
     if (!this.data.saved) {
-      if (this.data.photo && this.data.photo !== this._origPhotoRef) removePhoto(this.data.photo);
+      const newPhotos = this.data.photos.filter(p => !this._origPhotos.includes(p));
+      removePhotos(newPhotos);
       if (this.data.audio && this.data.audio !== this._origAudioRef) removeAudio(this.data.audio);
     }
   },

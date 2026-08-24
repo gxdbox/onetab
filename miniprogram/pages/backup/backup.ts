@@ -3,7 +3,7 @@
  *
  * 能导出就必须能导入。导入是合并语义（按 updatedAt 取新），不是覆盖——
  * 恢复备份不该反而弄丢现有的东西。
- * 导出 JSON 不含照片本体，只带 photoRef 引用（照片是设备本地文件）。
+ * 导出 JSON 不含照片本体，只带 photos 引用（照片是设备本地文件）。
  */
 import { repo } from '../../data/repo';
 import { getCustomScene, setCustomScene } from '../../data/prefs';

@@ -13,7 +13,7 @@ function t(id: string, updatedAt: number, p: Partial<Treasure> = {}): Treasure {
     sceneId: 'eat',
     tier: 'wish',
     joy: 3,
-    photoRef: null,
+    photos: [],
     notToday: null,
     status: 'active',
     source: 'self',
@@ -83,9 +83,12 @@ describe('导入数据规范化（不信任任何外部 JSON）', () => {
     expect(n.source).toBe('self');
   });
 
-  it('photoRef 只保留字符串引用，不含照片本体 [硬约束 #15]', () => {
-    const n = normalizeTreasure({ id: 'x', name: '面', photoRef: 'local://photos/abc.jpg' }, 0)!;
-    expect(n.photoRef).toBe('local://photos/abc.jpg');
+  it('photos 只保留字符串引用、去重、≤3 张，不含照片本体 [硬约束 #15]', () => {
+    const n = normalizeTreasure(
+      { id: 'x', name: '面', photos: ['a.jpg', 'b.jpg', 42, 'a.jpg', 'c.jpg', 'd.jpg'] },
+      0
+    )!;
+    expect(n.photos).toEqual(['a.jpg', 'b.jpg', 'c.jpg']); // 过滤非字符串、去重、≤3
     expect(JSON.stringify(n)).not.toContain('blob');
   });
 

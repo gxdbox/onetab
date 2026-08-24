@@ -28,9 +28,13 @@ Component({
     treasure(t: Treasure) {
       if (!t || !t.id) return;
       const scene = SCENES.find(s => s.id === t.sceneId);
+      // 页面未显式传 photo（properties.photo 为空）时，取首张照片作背景。
+      // 卡片仅在 verified 或首张照片存在时才显示照片背景，避免破坏心愿卡素描味。
+      const fallback = Array.isArray(t.photos) && t.photos.length > 0 ? t.photos[0] : '';
       this.setData({
         emoji: scene ? scene.emoji : '🍜',
         isNotToday: t.notToday != null && t.notToday === startOfDay(Date.now()),
+        photo: this.data.photo || fallback,
       });
     },
     photo() {

@@ -2,6 +2,27 @@
   padding: 48rpx 40rpx;
 }
 
+/* 录入模式切换：单条 / 批量 */
+.mode-switch {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.mode-link {
+  font-size: 26rpx;
+  color: #8b8172;
+  padding: 6rpx 4rpx;
+}
+.mode-link.on {
+  color: #a97e22;
+  font-weight: 600;
+}
+.mode-sep {
+  color: #d8cdb6;
+  margin: 0 12rpx;
+}
+
 .field-label {
   color: #8b8172;
   font-size: 26rpx;
@@ -9,6 +30,13 @@
 }
 .field-label:first-child {
   margin-top: 0;
+}
+
+/* 自动猜的场景标记 */
+.guess-tag {
+  color: #c4b99f;
+  font-size: 22rpx;
+  margin-left: 8rpx;
 }
 
 .name-input {
@@ -43,9 +71,16 @@
   font-weight: 600;
 }
 
+/* 照片网格（≤3 张） */
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
 .photo-box {
-  width: 240rpx;
-  height: 240rpx;
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  margin: 0 16rpx 16rpx 0;
   border-radius: 16rpx;
   border: 2rpx dashed #c4b99f;
   overflow: hidden;
@@ -60,6 +95,40 @@
 .photo-empty {
   font-size: 80rpx;
   opacity: 0.5;
+}
+/* 右上角 ✕：半透明黑底白叉 */
+.photo-remove {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+.photo-add {
+  border-style: dashed;
+  font-size: 60rpx;
+  opacity: 0.6;
+}
+
+/* 批量输入 */
+.bulk-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fdf9ef;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 30rpx;
+  line-height: 1.8;
+  min-height: 240rpx;
 }
 
 .submit-btn {

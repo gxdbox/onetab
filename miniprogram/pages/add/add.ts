@@ -3,11 +3,13 @@
  *
  * [硬约束 #2]  唯一必填项是名字；场景有默认值，用户可以完全不碰。
  * [硬约束 #4]  新条目一律以 wish 入库——不需要用户选状态，零配置。
- * [硬约束 #15] 照片压缩后存独立文件目录，主表只存 photoRef。
+ * [硬约束 #15] 照片压缩后存独立文件目录，主表只存 photos 引用（文件路径数组）。
  */
 import { DEFAULT_SCENE } from '../../core/scenes';
+import { guessSceneId } from '../../core/category';
+import { MAX_PHOTOS } from '../../core/merge';
 import { repo } from '../../data/repo';
-import { savePhoto, removePhoto } from '../../photos/photoStore';
+import { savePhoto, removePhoto, removePhotos } from '../../photos/photoStore';
 import { getSceneChips } from '../../data/prefs';
 import { VOICE_MAX_MS, saveAudio, removeAudio } from '../../audio/audioStore';
 
@@ -24,8 +26,13 @@ Page({
     name: '',
     sceneId: DEFAULT_SCENE,
     scenes: [] as ReturnType<typeof getSceneChips>,
-    photo: '',
-    photoRef: null as string | null,
+    photos: [] as string[],
+    // 场景是自动猜的（显示「·猜的」，手动点 chip 后不再被覆盖）
+    sceneGuessed: false,
+    // 批量模式：多行粘贴，一次收好 N 个
+    batch: false,
+    bulk: '',
+    savedCount: 0,
     // 语音速记（V2）：≤ 15s，说一句而不是录一段
     recording: false,
     recordSecs: 0,
@@ -41,28 +48,76 @@ Page({
   },
 
   onName(e: WechatMiniprogram.Input) {
-    this.setData({ name: e.detail.value });
+    const name = e.detail.value;
+    // 场景自动猜：默认路径零配置，猜错只需点一下改（justThisOne 交互哲学）
+    const picked = name.trim() ? guessSceneId(name) : DEFAULT_SCENE;
+    this.setData({ name, sceneId: picked, sceneGuessed: true });
   },
 
   pickScene(e: WechatMiniprogram.TouchEvent) {
-    this.setData({ sceneId: e.currentTarget.dataset.scene });
+    // 用户手动选了场景后，不再被自动猜覆盖
+    this.setData({ sceneId: e.currentTarget.dataset.scene, sceneGuessed: false });
   },
 
-  async choosePhoto() {
+  // ---------- 照片（≤3 张） [硬约束 #15] ----------
+
+  async addPhoto() {
+    const remaining = MAX_PHOTOS - this.data.photos.length;
+    if (remaining <= 0) return;
     try {
       const res = await wx.chooseMedia({
-        count: 1,
+        count: remaining,
         mediaType: ['image'],
         sizeType: ['compressed'],
       });
-      const temp = res.tempFiles[0].tempFilePath;
-      const ref = await savePhoto(temp); // [硬约束 #15] 压缩 + 独立存储
-      // 连拍两张时，第一张还没入库就直接清掉，不留孤儿
-      if (this.data.photoRef && this.data.photoRef !== ref) removePhoto(this.data.photoRef);
-      this.setData({ photo: ref, photoRef: ref });
+      // 逐张顺序保存，防一次并发写太多内存打爆；追加后截断到 ≤3
+      let photos = [...this.data.photos];
+      for (const f of res.tempFiles) {
+        const ref = await savePhoto(f.tempFilePath); // [硬约束 #15] 压缩 + 独立存储
+        photos.push(ref);
+        if (photos.length >= MAX_PHOTOS) break;
+      }
+      this.setData({ photos: photos.slice(0, MAX_PHOTOS) });
     } catch {
       // 用户取消选择
     }
+  },
+
+  removePhotoAt(e: WechatMiniprogram.TouchEvent) {
+    const i = Number(e.currentTarget.dataset.i);
+    const photos = [...this.data.photos];
+    const [ref] = photos.splice(i, 1);
+    // 先摘引用再删文件，绝不留孤儿
+    if (ref) removePhoto(ref);
+    this.setData({ photos });
+  },
+
+  // ---------- 批量模式（多行粘贴） ----------
+
+  toggleBatch() {
+    this.setData({ batch: !this.data.batch });
+  },
+
+  onBulk(e: WechatMiniprogram.TextareaInput) {
+    this.setData({ bulk: e.detail.value });
+  },
+
+  submitBulk() {
+    const lines = this.data.bulk
+      .split('\n')
+      .map(s => s.trim())
+      .filter(Boolean);
+    if (!lines.length) {
+      wx.showToast({ title: '一行一个，写点什么吧', icon: 'none' });
+      return;
+    }
+    for (const line of lines) {
+      // 批量收：不猜场景，一律默认场景，收完再改
+      repo.create({ name: line, sceneId: DEFAULT_SCENE });
+    }
+    wx.vibrateShort({ type: 'light' });
+    this.setData({ saved: true, savedCount: lines.length, savedName: '' });
+    setTimeout(() => wx.navigateBack(), 1500);
   },
 
   // ---------- 语音速记（V2） ----------
@@ -130,7 +185,7 @@ Page({
     if (this.data.recording) recorder?.stop();
     // 闭环：录了音/拍了照但放弃保存 → 清掉未入库的媒体文件，不留孤儿
     if (!this.data.saved) {
-      if (this.data.photoRef) removePhoto(this.data.photoRef);
+      removePhotos(this.data.photos);
       if (this.data.audioRef) removeAudio(this.data.audioRef);
     }
   },
@@ -141,10 +196,10 @@ Page({
       wx.showToast({ title: '给这个快乐起个名字吧', icon: 'none' });
       return;
     }
-    repo.create({ name, sceneId: this.data.sceneId, photoRef: this.data.photoRef, audioRef: this.data.audioRef });
+    repo.create({ name, sceneId: this.data.sceneId, photos: this.data.photos, audioRef: this.data.audioRef });
     wx.vibrateShort({ type: 'light' });
     // 收进册子后停留 1.5 秒——「快乐被强化一次」的具象化（SPEC §6.1）
-    this.setData({ saved: true, savedName: name });
+    this.setData({ saved: true, savedName: name, savedCount: 0 });
     setTimeout(() => wx.navigateBack(), 1500);
   },
 });

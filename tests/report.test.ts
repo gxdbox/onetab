@@ -12,7 +12,7 @@ function treasure(id: string, createdAt: number, sceneId: Treasure['sceneId'] = 
     sceneId,
     tier: 'wish',
     joy: 3,
-    photoRef: null,
+    photos: [],
     notToday: null,
     status: 'active',
     source: 'self',

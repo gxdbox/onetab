@@ -7,7 +7,7 @@
  */
 import { Treasure } from '../../core/types';
 import { repo } from '../../data/repo';
-import { photoPath, removePhoto } from '../../photos/photoStore';
+import { photoPath, removePhotos } from '../../photos/photoStore';
 import { removeAudio } from '../../audio/audioStore';
 
 interface CardVM {
@@ -26,7 +26,7 @@ Page({
 
   refresh() {
     const archived = repo.listTreasures('archived');
-    this.setData({ items: archived.map(t => ({ treasure: t, photo: photoPath(t.photoRef) })) });
+    this.setData({ items: archived.map(t => ({ treasure: t, photo: photoPath(t.photos?.[0]) })) });
   },
 
   restore(e: WechatMiniprogram.TouchEvent) {
@@ -51,7 +51,7 @@ Page({
       confirmColor: '#b04a3a',
       success: m => {
         if (m.confirm) {
-          removePhoto(t.photoRef);
+          removePhotos(t.photos); // 先摘引用再删文件，绝不留孤儿 [硬约束 #15]
           removeAudio(t.audioRef); // 修复泄漏：语音与照片同构，删条目必删文件
           repo.removeHard(id);
           this.refresh();

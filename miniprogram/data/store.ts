@@ -35,7 +35,27 @@ export class WxStorageStore implements LocalStore {
   }
 
   loadTreasures(): Treasure[] {
-    return this.read<Treasure[]>(KEYS.treasures, []);
+    const list = this.read<Treasure[]>(KEYS.treasures, []);
+    // 旧数据迁移（photoRef 单张 → photos 数组）[硬约束 #15]：
+    // 发现任一元素带 photoRef（且 photos 不是数组）时，迁移为 photos: [photoRef] 并尝试写回。
+    // 写回失败不阻塞读取，下次再试。逐条处理，兼容已迁移的条目。
+    let changed = false;
+    const migrated = list.map(t => {
+      if (t && typeof t === 'object' && !Array.isArray((t as Treasure).photos)) {
+        const raw = t as unknown as { photoRef?: string | null };
+        (t as Treasure).photos = raw.photoRef ? [raw.photoRef] : [];
+        changed = true;
+      }
+      return t;
+    });
+    if (changed) {
+      try {
+        wx.setStorageSync(KEYS.treasures, migrated);
+      } catch {
+        // 写回失败：下次读取再迁一次
+      }
+    }
+    return migrated;
   }
   saveTreasures(list: Treasure[]): void {
     wx.setStorageSync(KEYS.treasures, list);

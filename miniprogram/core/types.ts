@@ -5,10 +5,12 @@
  *              这个晋级闭环就是留存引擎，不是推送通知。
  * [硬约束 #8]  status: archived 必须可撤销，且有独立的「抽屉」视图。
  * [硬约束 #9]  updatedAt 是导入合并语义（按 updatedAt 取新）的裁决字段（V1.5）。
- * [硬约束 #15] photoRef 只存引用（文件路径），绝不内嵌照片数据。
+ * [硬约束 #15] photos 只存引用（文件路径数组，≤3 张），绝不内嵌照片数据。
  */
 
 export type SceneId = 'eat' | 'play' | 'far' | 'rest' | 'custom';
+/** 类别（justThisOne 体系的收藏分类）：add 页自动猜测用，与 PWA 版 lib/types.ts 一致 */
+export type Category = 'food' | 'place' | 'activity' | 'thing' | 'media' | 'micro';
 export type Tier = 'wish' | 'verified';
 export type TreasureStatus = 'active' | 'archived';
 export type DrawMode = 'pool' | 'safe';
@@ -24,7 +26,8 @@ export interface Treasure {
   tier: Tier;
   /** 开心程度 1-5，加权抽签的输入 [硬约束 #3]。高频编辑字段，绝不能触发照片重写 [硬约束 #15]。 */
   joy: number;
-  photoRef: string | null;
+  /** 照片引用数组（≤3 张）：只存文件路径，不存数据 [硬约束 #15]。与 PWA 版 MAX_PHOTOS_PER_ITEM 一致。 */
+  photos: string[];
   /** 语音速记（V2）：≤ 15s 的 AAC 文件路径，与照片同构 [硬约束 #15] */
   audioRef?: string | null;
   note?: string;

@@ -9,7 +9,7 @@ import { SCENES, sceneOf } from '../../core/scenes';
 import { startOfDay } from '../../core/engine';
 import { Treasure } from '../../core/types';
 import { repo } from '../../data/repo';
-import { photoPath, removePhoto } from '../../photos/photoStore';
+import { photoPath, removePhotos } from '../../photos/photoStore';
 import { removeAudio } from '../../audio/audioStore';
 
 interface CardVM {
@@ -36,7 +36,7 @@ Page({
       scene,
       items: all
         .filter(t => t.sceneId === scene.id)
-        .map(t => ({ treasure: t, photo: photoPath(t.photoRef) })),
+        .map(t => ({ treasure: t, photo: photoPath(t.photos?.[0]) })),
     })).filter(g => g.items.length > 0);
     this.setData({ groups, total: all.length });
   },
@@ -88,7 +88,7 @@ Page({
             confirmColor: '#b04a3a',
             success: m => {
               if (m.confirm) {
-                removePhoto(t.photoRef);
+                removePhotos(t.photos); // 先摘引用再删文件，绝不留孤儿 [硬约束 #15]
                 removeAudio(t.audioRef); // 语音与照片同构：删条目必删文件
                 repo.removeHard(id);
                 this.refresh();

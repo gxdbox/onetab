@@ -10,14 +10,14 @@
 import { DrawMode, DrawOutcome, DrawRecord, Promotion, RelaxLevel, SceneId, Treasure } from '../core/types';
 import { newId } from '../core/id';
 import { startOfDay } from '../core/engine';
-import { ExportPayload, MergeReport, mergeById, normalizePayload } from '../core/merge';
+import { ExportPayload, MAX_PHOTOS, MergeReport, mergeById, normalizePayload } from '../core/merge';
 import { LocalStore, WxStorageStore } from './store';
 import { getCustomScene } from './prefs';
 
 export interface NewTreasureInput {
   name: string;
   sceneId: SceneId;
-  photoRef?: string | null;
+  photos?: string[];
   audioRef?: string | null;
   source?: 'self' | 'starter';
   joy?: number;
@@ -45,7 +45,7 @@ export class Repo {
       sceneId: input.sceneId,
       tier: 'wish', // [硬约束 #4] 新条目一律 wish，晋级只能走回访确认
       joy: input.joy ?? 3,
-      photoRef: input.photoRef ?? null,
+      photos: (input.photos ?? []).slice(0, MAX_PHOTOS),
       audioRef: input.audioRef ?? null,
       notToday: null,
       status: 'active',
@@ -80,7 +80,7 @@ export class Repo {
    */
   update(
     id: string,
-    fields: Partial<Pick<Treasure, 'name' | 'sceneId' | 'joy' | 'note' | 'photoRef' | 'audioRef'>>
+    fields: Partial<Pick<Treasure, 'name' | 'sceneId' | 'joy' | 'note' | 'photos' | 'audioRef'>>
   ): void {
     this.patch(id, t => {
       if (typeof fields.name === 'string' && fields.name.trim()) t.name = fields.name.trim().slice(0, 20);
@@ -90,7 +90,7 @@ export class Repo {
         const trimmed = (fields.note || '').trim().slice(0, 50);
         t.note = trimmed || undefined;
       }
-      if (fields.photoRef !== undefined) t.photoRef = fields.photoRef;
+      if (Array.isArray(fields.photos)) t.photos = fields.photos.slice(0, MAX_PHOTOS);
       if (fields.audioRef !== undefined) t.audioRef = fields.audioRef;
     });
   }
@@ -219,7 +219,7 @@ export class Repo {
 
   // ---------- 导出 / 导入 [硬约束 #9] ----------
 
-  /** 导出不含照片本体，只带 photoRef 引用 [硬约束 #15] */
+  /** 导出不含照片本体，只带 photos 引用 [硬约束 #15] */
   exportData(): ExportPayload {
     return {
       app: 'onetab',
