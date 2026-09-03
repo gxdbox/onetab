@@ -12,7 +12,7 @@ import { newId } from '../core/id';
 import { startOfDay } from '../core/engine';
 import { ExportPayload, MAX_PHOTOS, MergeReport, mergeById, normalizePayload } from '../core/merge';
 import { LocalStore, WxStorageStore } from './store';
-import { getCustomScene } from './prefs';
+import { getCustomScenes, mergeCustomScenes } from './prefs';
 
 export interface NewTreasureInput {
   name: string;
@@ -228,7 +228,7 @@ export class Repo {
       treasures: this.store.loadTreasures(),
       draws: this.store.loadDraws(),
       promotions: this.store.loadPromotions(),
-      customScene: getCustomScene(),
+      customScenes: getCustomScenes(),
     };
   }
 
@@ -250,6 +250,9 @@ export class Repo {
     if (payload.promotions) {
       const r = mergeById(this.store.loadPromotions(), payload.promotions);
       this.store.savePromotions(r.merged);
+    }
+    if (payload.customScenes) {
+      mergeCustomScenes(payload.customScenes); // 合并语义：本地没有的补上，已有的保留
     }
     return report;
   }

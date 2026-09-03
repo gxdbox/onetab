@@ -2,9 +2,11 @@
  * 场景 —— 决策是有语境的（中午十二点的池子里不该出现「去拉萨」）
  *
  * [硬约束 #2] 场景有默认值（eat），添加条目时用户可以完全不碰——默认路径零配置。
- * V1 预置四个，不可增删：自定义场景是「分类整理欲」的入口，整理是收集的反面。
+ * 预置四个 + 可增删的多个自定义场景（id 以 `c:` 开头，存偏好层 data/prefs.ts）。
+ * 自定义场景是给「遛娃」「电影」这类个性化语境的窄门；core 层保持零依赖，
+ * 自定义场景的 emoji/label 由 data 层（getSceneById）负责解析。
  */
-import { SceneId } from './types';
+import { PresetSceneId, SceneId } from './types';
 
 export interface Scene {
   id: SceneId;
@@ -21,13 +23,18 @@ export const SCENES: Scene[] = [
 
 export const DEFAULT_SCENE: SceneId = 'eat';
 
-/**
- * 自定义场景占位（V1.5）：最多一个，标签存偏好层（data/prefs.ts）。
- * 预置四个不可增删；自定义是给「遛娃」「摒猫」这类个性化语境的窄门。
- */
-export const CUSTOM_SCENE: Scene = { id: 'custom', emoji: '⭐', label: '自定义' };
+export const PRESET_SCENE_IDS: PresetSceneId[] = ['eat', 'play', 'far', 'rest'];
 
+/** 自定义场景 id 一律以 `c:` 开头——永不与预置 id 冲突 */
+export function isCustomSceneId(id: string): boolean {
+  return id.startsWith('c:');
+}
+
+export function isPresetSceneId(id: string): id is PresetSceneId {
+  return (PRESET_SCENE_IDS as string[]).includes(id);
+}
+
+/** 只解析预置场景。自定义场景请用 data 层的 getSceneById。 */
 export function sceneOf(id: SceneId): Scene {
-  if (id === 'custom') return CUSTOM_SCENE;
   return SCENES.find(s => s.id === id) || SCENES[0];
 }

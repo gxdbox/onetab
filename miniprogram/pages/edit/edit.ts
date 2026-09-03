@@ -6,12 +6,11 @@
  * 媒体策略：新文件先暂存，点「保存」才写库并删旧文件；放弃则删新文件——不留孤儿。
  */
 import { repo } from '../../data/repo';
-import { getSceneChips, getCustomScene } from '../../data/prefs';
+import { getSceneChips, getSceneById } from '../../data/prefs';
 import { savePhoto, removePhotos } from '../../photos/photoStore';
 import { MAX_PHOTOS } from '../../core/merge';
 import { VOICE_MAX_MS, saveAudio, removeAudio } from '../../audio/audioStore';
 import { Treasure } from '../../core/types';
-import { sceneOf } from '../../core/scenes';
 
 // 录音器是全局单例（小程序限制）
 const recorder = wx.getRecorderManager
@@ -66,12 +65,12 @@ Page({
     this.refreshScenes();
   },
 
-  /** 场景 chips：动态 + 兜底（条目在 custom 而自定义场景已删时，仍显示当前场景） */
+  /** 场景 chips：动态 + 兜底（条目在自定义而自定义场景已删时，仍显示当前场景） */
   refreshScenes() {
     let scenes = getSceneChips();
     const hasCurrent = scenes.some(s => s.id === this.data.sceneId);
     if (!hasCurrent) {
-      scenes = [...scenes, sceneOf(this.data.sceneId)];
+      scenes = [...scenes, getSceneById(this.data.sceneId) ?? { id: this.data.sceneId, emoji: '⭐', label: '其他' }];
     }
     this.setData({ scenes });
   },

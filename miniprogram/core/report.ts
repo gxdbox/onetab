@@ -129,13 +129,24 @@ export function annualReport(
   }
 
   // 场景分布（按抽签次数；条目已被删除的计入 other）
+  // 预置四场景 + 数据中出现的自定义场景（id 形如 `c:电影`，label 从 id 提取）
   const sceneOf_ = new Map(treasures.map(t => [t.id, t.sceneId]));
   const sceneCount = new Map<string, number>();
   for (const d of yearDraws) {
     const sid = sceneOf_.get(d.treasureId) ?? 'other';
     sceneCount.set(sid, (sceneCount.get(sid) ?? 0) + 1);
   }
-  const sceneBars: SceneBar[] = SCENES.concat([{ id: 'custom', emoji: '⭐', label: '自定义' } as const])
+  const sceneDefs: { id: string; emoji: string; label: string }[] = [...SCENES];
+  for (const sid of sceneCount.keys()) {
+    if (sid !== 'other' && !SCENES.some(s => s.id === sid)) {
+      sceneDefs.push({
+        id: sid,
+        emoji: '⭐',
+        label: sid.startsWith('c:') ? sid.slice(2) : sid,
+      });
+    }
+  }
+  const sceneBars: SceneBar[] = sceneDefs
     .filter(s => (sceneCount.get(s.id) ?? 0) > 0)
     .map(s => ({
       sceneId: s.id,

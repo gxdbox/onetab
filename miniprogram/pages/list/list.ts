@@ -5,10 +5,11 @@
  * [硬约束 #7]  长按可标记「今天不想」（当日有效，次日自动失效）。
  * [硬约束 #8]  长按可归档（可撤销）；彻底删除需二次确认——误点一下就永久消失不可接受。
  */
-import { SCENES, sceneOf } from '../../core/scenes';
+import { SCENES, Scene } from '../../core/scenes';
 import { startOfDay } from '../../core/engine';
 import { Treasure } from '../../core/types';
 import { repo } from '../../data/repo';
+import { getCustomScenes, getSceneById } from '../../data/prefs';
 import { photoPath, removePhotos } from '../../photos/photoStore';
 import { removeAudio } from '../../audio/audioStore';
 
@@ -29,15 +30,28 @@ Page({
 
   refresh() {
     const all = repo.listTreasures('active');
-    // 分组：预置四场景 + 自定义场景（若存在且有条目）
-    const groups = SCENES.concat(
-      all.some(t => t.sceneId === 'custom') ? [sceneOf('custom')] : []
-    ).map(scene => ({
-      scene,
-      items: all
-        .filter(t => t.sceneId === scene.id)
-        .map(t => ({ treasure: t, photo: photoPath(t.photos?.[0]) })),
-    })).filter(g => g.items.length > 0);
+    const toCard = (t: Treasure): CardVM => ({ treasure: t, photo: photoPath(t.photos?.[0]) });
+    // 分组顺序：预置四场景 → 自定义场景（有条目的）→ 孤儿（导入等引用了已删场景）
+    const custom = getCustomScenes();
+    const order = [...SCENES.map(s => s.id), ...custom.map(s => s.id)];
+    const seen = new Set<string>();
+    const groups: { scene: Scene; items: CardVM[] }[] = [];
+    const sceneOfId = (id: string): Scene => getSceneById(id) ?? { id, emoji: '⭐', label: '其他' };
+    for (const sid of order) {
+      if (seen.has(sid)) continue;
+      seen.add(sid);
+      const items = all.filter(t => t.sceneId === sid).map(toCard);
+      if (items.length > 0) groups.push({ scene: sceneOfId(sid), items });
+    }
+    // 孤儿兜底：有条目但场景已不在注册表（导入/旧数据），不让它们从列表消失
+    for (const t of all) {
+      if (seen.has(t.sceneId)) continue;
+      seen.add(t.sceneId);
+      groups.push({
+        scene: sceneOfId(t.sceneId),
+        items: all.filter(x => x.sceneId === t.sceneId).map(toCard),
+      });
+    }
     this.setData({ groups, total: all.length });
   },
 

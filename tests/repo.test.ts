@@ -7,6 +7,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Repo } from '../miniprogram/data/repo';
 import { WxStorageStore } from '../miniprogram/data/store';
+import { getCustomScenes } from '../miniprogram/data/prefs';
 import { Treasure } from '../miniprogram/core/types';
 
 /** 内存版 wx mock：只实现 repo/store 用到的 storage API */
@@ -200,6 +201,19 @@ describe('导入合并语义（updatedAt 取新）[硬约束 #9]', () => {
     repo.importData(only);
     const all = repo.listTreasures();
     expect(all.map(t => t.id).sort()).toEqual([a.id, b.id].sort());
+  });
+
+  it('importData 合并自定义场景：本地没有的补上 [需求 1]', () => {
+    repo.importData({
+      app: 'onetab',
+      version: 1,
+      exportedAt: Date.now(),
+      treasures: [],
+      draws: [],
+      promotions: [],
+      customScenes: [{ id: 'c:电影', emoji: '🎬', label: '电影' }],
+    });
+    expect(getCustomScenes().map(s => s.label)).toContain('电影');
   });
 });
 

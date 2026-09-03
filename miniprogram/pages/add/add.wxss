@@ -71,6 +71,55 @@
   font-weight: 600;
 }
 
+/* 需求 1：新增场景 chip + 内联创建面板 */
+.chip-add {
+  border-style: dashed;
+  border-color: #c4b99f;
+  color: #8b8172;
+}
+.add-scene-panel {
+  margin-top: 12rpx;
+  background: #fdf9ef;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+.add-scene-row {
+  display: flex;
+  align-items: center;
+}
+.add-scene-input {
+  flex: 1;
+  background: #fffdf6;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 12rpx;
+  padding: 14rpx 20rpx;
+  font-size: 30rpx;
+  margin-right: 12rpx;
+}
+.btn-sm {
+  font-size: 26rpx;
+  padding: 12rpx 24rpx;
+  margin-left: 8rpx;
+  border-radius: 999rpx;
+}
+.emoji-options {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 16rpx;
+}
+.emoji-opt {
+  font-size: 40rpx;
+  padding: 8rpx 14rpx;
+  border-radius: 12rpx;
+  margin: 0 8rpx 8rpx 0;
+  border: 2rpx solid transparent;
+}
+.emoji-opt.on {
+  background: #f7e9c6;
+  border-color: #c9a24b;
+}
+
 /* 照片网格（≤3 张） */
 .photo-grid {
   display: flex;

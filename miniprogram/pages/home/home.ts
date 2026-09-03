@@ -9,7 +9,6 @@
  * [硬约束 #16] 记住的筛选条件以可见 chips 呈现，点击可清除。
  */
 import { draw } from '../../core/engine';
-import { sceneOf } from '../../core/scenes';
 import { anniversaries } from '../../core/report';
 import { DrawContext, RelaxLevel, SceneId, Treasure } from '../../core/types';
 import { repo } from '../../data/repo';
@@ -18,12 +17,13 @@ import {
   RITUAL_DURATION_LABEL,
   RITUAL_DURATION_MS,
   RITUAL_SKIN_LABEL,
-  getCustomScene,
+  addCustomScene,
+  getCustomScenes,
   getRememberedFilters,
   getRitual,
+  getSceneById,
   getSceneChips,
   removeCustomScene,
-  setCustomScene,
   setRememberedFilters,
   setRitual,
   type RitualDuration,
@@ -51,7 +51,7 @@ let cycleTimer: ReturnType<typeof setInterval> | null = null;
 Page({
   data: {
     scenes: [] as ReturnType<typeof getSceneChips>,
-    customScene: null as ReturnType<typeof getCustomScene>,
+    customScenes: [] as ReturnType<typeof getCustomScenes>,
     // 仪式偏好（V1.5）：时长 + 皮肤
     ritual: { duration: 'standard', skin: 'classic' } as { duration: RitualDuration; skin: RitualSkin },
     durationOptions: (['brisk', 'standard', 'grand'] as RitualDuration[]).map(key => ({
@@ -96,16 +96,14 @@ Page({
     const filters = getRememberedFilters();
     const ritual = getRitual();
     const scenes = getSceneChips();
-    const custom = getCustomScene();
-    // 自定义场景已被删但筛选还指着它 → 回退到全部，避免隐形死筛选
-    const sceneFilter =
-      filters.sceneFilter === 'custom' && !custom ? 'all' : filters.sceneFilter;
+    const customScenes = getCustomScenes();
+    // 自定义场景已被删但筛选还指着它 → getRememberedFilters 已回退为 all，这里直接用
     this.setData({
       scenes,
-      customScene: custom,
+      customScenes,
       ritual,
       mode: filters.mode,
-      filterScene: sceneFilter,
+      filterScene: filters.sceneFilter,
     });
   },
 
@@ -128,7 +126,7 @@ Page({
       wishCount: active.filter(t => t.tier === 'wish').length,
       archivedCount: archived.length,
       hasActiveFilters: this.data.mode === 'safe' || this.data.filterScene !== 'all',
-      sceneLabel: this.data.filterScene === 'all' ? '' : sceneOf(this.data.filterScene).label,
+      sceneLabel: this.data.filterScene === 'all' ? '' : (getSceneById(this.data.filterScene)?.label ?? ''),
       revisit: pending
         ? { treasure: pending.treasure, question: `前两天抽中的「${pending.treasure.name}」，去了吗？开心吗？` }
         : null,
@@ -228,7 +226,7 @@ Page({
         result: {
           treasure: res.treasure,
           photo: photoPath(res.treasure.photos?.[0]), // 首张作卡片背景
-          emoji: sceneOf(res.treasure.sceneId).emoji,
+          emoji: getSceneById(res.treasure.sceneId)?.emoji ?? '⭐',
           relaxedText: res.relaxed.map(l => RELAX_TEXT[l]).join('；'),
           relaxed: res.relaxed,
           rerollable: this.data.rerollLeft > 0,
@@ -294,30 +292,36 @@ Page({
     setRitual(ritual);
   },
 
-  // ---------- 自定义场景（最多一个） ----------
+  // ---------- 自定义场景（可增删多个） ----------
 
+  /** 首页抽屉创建：showModal 只支持单输入框，emoji 用默认 ⭐（记一个页的内联创建可选 emoji） */
   addCustomScene() {
     wx.showModal({
-      title: '自定义场景（最多一个）',
+      title: '新建场景（≤4 字）',
       editable: true,
-      placeholderText: '比如：遛娃',
+      placeholderText: '比如：遛娃、电影',
       success: res => {
         const label = (res.content || '').trim();
         if (!label) return;
-        setCustomScene(label);
+        const scene = addCustomScene(label, '⭐');
+        if (!scene) {
+          wx.showToast({ title: '这个场景已经有了', icon: 'none' });
+          return;
+        }
         this.loadPrefs();
         this.refresh();
-        wx.showToast({ title: '已添加 ⭐', icon: 'none' });
+        wx.showToast({ title: `已建场景 ${scene.emoji}`, icon: 'none' });
       },
     });
   },
 
-  removeCustomScene() {
-    const custom = getCustomScene();
-    if (!custom) return;
-    const affected = repo.listTreasures().filter(t => t.sceneId === 'custom').length;
+  removeCustomScene(e: WechatMiniprogram.TouchEvent) {
+    const id = e.currentTarget.dataset.id as string;
+    const scene = getSceneById(id);
+    if (!scene) return;
+    const affected = repo.listTreasures().filter(t => t.sceneId === id).length;
     wx.showModal({
-      title: `删除「${custom.label}」？`,
+      title: `删除「${scene.label}」？`,
       content: affected
         ? `该场景下有 ${affected} 个条目，删除后它们会移到「🎉 玩什么」。`
         : '这个场景下还没有条目。',
@@ -325,15 +329,30 @@ Page({
       confirmColor: '#b04a3a',
       success: m => {
         if (!m.confirm) return;
-        repo.reassignScene('custom', 'play');
-        removeCustomScene();
-        if (this.data.filterScene === 'custom') {
+        repo.reassignScene(id, 'play'); // 不产生孤儿条目
+        removeCustomScene(id);
+        if (this.data.filterScene === id) {
           this.setData({ filterScene: 'all' });
+          setRememberedFilters({ mode: this.data.mode, sceneFilter: 'all' });
         }
         this.loadPrefs();
         this.refresh();
       },
     });
+  },
+
+  // ---------- 需求 2-A：情侣「今天吃什么」一键直达 ----------
+  // 「随便→盖浇饭？→饺子？」僵持时，把抽签范围锁到 eat 场景，1 次点击开抽。
+  // [硬约束 #16] 记住的筛选立即以可见 chip 呈现，点它即可恢复默认。
+  quickEat() {
+    this.setData({ mode: 'pool', filterScene: 'eat' });
+    setRememberedFilters({ mode: 'pool', sceneFilter: 'eat' });
+    this.refresh();
+    if (this.data.isEmpty) {
+      wx.showToast({ title: '册子里还没有吃的，先「记一个」吧', icon: 'none' });
+      return;
+    }
+    this.onDraw();
   },
 
   goBackup() {

@@ -45,7 +45,37 @@
         data-scene="{{item.id}}"
         bind:tap="pickScene"
       >{{item.emoji}} {{item.label}}</button>
+      <!-- 需求 1：场景不够时当场建一个（记一部电影，但没有电影场景） -->
+      <button wx:if="{{!addingScene}}" class="chip-btn chip-add" bind:tap="startAddScene">＋ 新增</button>
     </view>
+
+    <!-- 内联新增场景：名字 + emoji，创建后自动选中 -->
+    <block wx:if="{{addingScene}}">
+      <view class="add-scene-panel">
+        <view class="add-scene-row">
+          <input
+            class="add-scene-input serif"
+            placeholder="场景名（≤4 字）"
+            placeholder-class="placeholder"
+            value="{{newSceneLabel}}"
+            bindinput="onNewSceneLabel"
+            maxlength="4"
+            focus
+          />
+          <button class="btn-main btn-sm" bind:tap="confirmAddScene">添加</button>
+          <button class="btn-ghost btn-sm" bind:tap="cancelAddScene">取消</button>
+        </view>
+        <view class="emoji-options">
+          <text
+            wx:for="{{emojiOptions}}"
+            wx:key="*this"
+            class="emoji-opt {{newSceneEmoji === item ? 'on' : ''}}"
+            data-emoji="{{item}}"
+            bind:tap="pickNewEmoji"
+          >{{item}}</text>
+        </view>
+      </view>
+    </block>
 
     <!-- 照片：强烈鼓励但不强制，最多 3 张 -->
     <view class="field-label">顺手拍一张？（可跳过，最多 {{photos.length}}/3）</view>

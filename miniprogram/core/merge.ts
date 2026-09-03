@@ -9,7 +9,7 @@
  *
  * 纯函数模块：不读存储、不读时钟，可单测（tests/merge.test.ts）。
  */
-import { DrawRecord, Promotion, Treasure } from './types';
+import { CustomScene, DrawRecord, Promotion, Treasure } from './types';
 
 /** 每件小确幸最多几张照片 [硬约束 #15] —— 与 PWA 版 MAX_PHOTOS_PER_ITEM 一致 */
 export const MAX_PHOTOS = 3;
@@ -61,12 +61,18 @@ export interface ExportPayload {
   treasures: Treasure[];
   draws: DrawRecord[];
   promotions: Promotion[];
-  customScene?: { id: 'custom'; label: string } | null;
+  /** 自定义场景列表（可多个，id 为 `c:xxx`）。V1 旧版导出为单值 customScene，导入时兼容。 */
+  customScenes?: CustomScene[] | null;
 }
 
 // ---------- 导入数据的规范化：不信任任何外部 JSON ----------
 
-const SCENE_IDS = ['eat', 'play', 'far', 'rest', 'custom'];
+const PRESET_SCENE_IDS = ['eat', 'play', 'far', 'rest'];
+
+/** 合法场景 id：预置四场景 或 `c:` 开头的自定义场景（允许多个） */
+function isValidSceneId(id: unknown): id is string {
+  return typeof id === 'string' && (PRESET_SCENE_IDS.includes(id) || id.startsWith('c:'));
+}
 
 function num(v: unknown, fallback: number): number {
   return typeof v === 'number' && !Number.isNaN(v) ? v : fallback;
@@ -91,7 +97,7 @@ export function normalizeTreasure(raw: unknown, now: number): Treasure | null {
   if (!raw || typeof raw !== 'object') return null;
   const r = raw as Record<string, unknown>;
   if (typeof r.id !== 'string' || typeof r.name !== 'string' || !r.name.trim()) return null;
-  const sceneId = SCENE_IDS.includes(r.sceneId as string) ? (r.sceneId as Treasure['sceneId']) : 'eat';
+  const sceneId = isValidSceneId(r.sceneId) ? r.sceneId : 'eat';
   const note = str(r.note);
   return {
     id: r.id,
@@ -122,7 +128,7 @@ export function normalizeDraw(raw: unknown, now: number): DrawRecord | null {
     id: r.id,
     treasureId: r.treasureId,
     mode: r.mode === 'safe' ? 'safe' : 'pool',
-    sceneFilter: SCENE_IDS.includes(r.sceneFilter as string) ? (r.sceneFilter as DrawRecord['sceneFilter']) : 'all',
+    sceneFilter: r.sceneFilter === 'all' || isValidSceneId(r.sceneFilter) ? r.sceneFilter : 'all',
     outcome: r.outcome === 'rerolled' ? 'rerolled' : 'accepted',
     relaxed,
     drawnAt: num(r.drawnAt, now),
@@ -140,6 +146,17 @@ export function normalizePromotion(raw: unknown, now: number): Promotion | null 
     drawId: r.drawId,
     confirmedAt: num(r.confirmedAt, now),
   };
+}
+
+/** 规范化一条自定义场景；脏数据丢弃 */
+function normalizeCustomScene(raw: unknown): CustomScene | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  if (typeof r.id !== 'string' || !r.id.startsWith('c:')) return null;
+  const label = str(r.label);
+  if (!label) return null;
+  const emoji = typeof r.emoji === 'string' && r.emoji ? r.emoji : '⭐';
+  return { id: r.id.slice(0, 32), emoji, label: label.slice(0, 4) };
 }
 
 /** 规范化整份导入载荷；任何一段坏了只丢弃那一段，不让整份导入失败 */
@@ -161,9 +178,17 @@ export function normalizePayload(raw: unknown): Partial<ExportPayload> {
       .map(x => normalizePromotion(x, now))
       .filter((x): x is Promotion => x !== null);
   }
-  if (r.customScene && typeof r.customScene === 'object') {
+  if (Array.isArray(r.customScenes)) {
+    result.customScenes = r.customScenes
+      .map(s => normalizeCustomScene(s))
+      .filter((s): s is CustomScene => s !== null);
+  } else if (r.customScene && typeof r.customScene === 'object') {
+    // V1 旧版单值 customScene → 兼容升级为列表（老备份导入不丢场景）
     const label = str((r.customScene as Record<string, unknown>).label);
-    if (label) result.customScene = { id: 'custom', label: label.slice(0, 4) };
+    if (label) {
+      const name = label.slice(0, 4);
+      result.customScenes = [{ id: `c:${name}`, emoji: '⭐', label: name }];
+    }
   }
   return result;
 }

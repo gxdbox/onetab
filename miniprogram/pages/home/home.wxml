@@ -32,9 +32,9 @@
   <!-- 空态：空库是头号杀手 [硬约束 #11 #12] -->
   <view wx:if="{{isEmpty}}" class="empty">
     <view class="empty-title serif">册子还是空的</view>
-    <view class="empty-sub">想想上周让你嘴角上扬的一件小事</view>
+    <view class="empty-sub">两个人一起收快乐——今天吃什么、周末去哪儿，拿不定主意时闭眼一指</view>
     <button class="btn-main empty-btn" bind:tap="goStarter">先翻翻灵感卡</button>
-    <button class="btn-ghost empty-btn" bind:tap="goDuel">心里已有答案？二选一</button>
+    <button class="btn-ghost empty-btn" bind:tap="goDuel">心里已有答案？让它裁判（二选一）</button>
   </view>
 
   <!-- 主流程：长按蓄力，闭眼一指。主流程上没有任何配置项 [硬约束 #2] -->
@@ -43,7 +43,11 @@
       <view class="draw-main serif">帮我闭眼一指</view>
       <view class="draw-sub">长按 1.5 秒 · 把选择权交出去</view>
     </view>
-    <view class="drawer-toggle" bind:tap="openDrawer">筛选</view>
+    <!-- 需求 2-A：情侣「今天吃什么」直达——锁定 eat 场景 1 次点击开抽 -->
+    <view class="quick-row">
+      <button class="quick-eat" bind:tap="quickEat">🍜 今天吃什么</button>
+      <view class="drawer-toggle" bind:tap="openDrawer">筛选</view>
+    </view>
   </view>
 
   <view class="fab" bind:tap="goAdd">＋ 记一个</view>
@@ -67,9 +71,20 @@
         data-scene="{{item.id}}"
         bind:tap="setScene"
       >{{item.emoji}} {{item.label}}</button>
-      <!-- 自定义场景（最多一个）：给「遛娃」「摒猫」这类语境的窄门 -->
-      <button wx:if="{{!customScene}}" class="chip-btn chip-add" bind:tap="addCustomScene">＋ 自定义</button>
-      <button wx:else class="chip-btn chip-add" bind:tap="removeCustomScene">⭐ {{customScene.label}} ✕</button>
+    <!-- 自定义场景管理（可增删多个）：点 ✕ 删除，条目会移到「🎉 玩什么」 -->
+    <view class="drawer-row" wx:if="{{customScenes.length > 0}}">
+      <text class="drawer-label">自定义场景 · 点 ✕ 删除</text>
+      <text
+        wx:for="{{customScenes}}"
+        wx:key="id"
+        class="chip-btn chip-custom"
+        data-id="{{item.id}}"
+        bind:tap="removeCustomScene"
+      >{{item.emoji}} {{item.label}} ✕</text>
+    </view>
+    <view class="drawer-row">
+      <button class="chip-btn chip-add" bind:tap="addCustomScene">＋ 新增场景</button>
+    </view>
     </view>
     <view class="drawer-row">
       <text class="drawer-label">仪式 · 时长</text>

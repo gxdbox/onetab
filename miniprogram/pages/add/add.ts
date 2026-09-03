@@ -10,7 +10,7 @@ import { guessSceneId } from '../../core/category';
 import { MAX_PHOTOS } from '../../core/merge';
 import { repo } from '../../data/repo';
 import { savePhoto, removePhoto, removePhotos } from '../../photos/photoStore';
-import { getSceneChips } from '../../data/prefs';
+import { getSceneChips, addCustomScene, CUSTOM_SCENE_EMOJIS } from '../../data/prefs';
 import { VOICE_MAX_MS, saveAudio, removeAudio } from '../../audio/audioStore';
 
 // 录音器是全局单例（小程序限制）；页面只持引用
@@ -33,6 +33,11 @@ Page({
     batch: false,
     bulk: '',
     savedCount: 0,
+    // 新增场景（需求 1）：场景不够时当场建一个
+    addingScene: false,
+    newSceneLabel: '',
+    newSceneEmoji: '⭐',
+    emojiOptions: CUSTOM_SCENE_EMOJIS,
     // 语音速记（V2）：≤ 15s，说一句而不是录一段
     recording: false,
     recordSecs: 0,
@@ -57,6 +62,47 @@ Page({
   pickScene(e: WechatMiniprogram.TouchEvent) {
     // 用户手动选了场景后，不再被自动猜覆盖
     this.setData({ sceneId: e.currentTarget.dataset.scene, sceneGuessed: false });
+  },
+
+  // ---------- 新增场景（需求 1）：场景不够时当场建一个，不用绕回首页抽屉 ----------
+
+  startAddScene() {
+    this.setData({ addingScene: true, newSceneLabel: '', newSceneEmoji: '⭐' });
+  },
+
+  cancelAddScene() {
+    this.setData({ addingScene: false });
+  },
+
+  onNewSceneLabel(e: WechatMiniprogram.Input) {
+    this.setData({ newSceneLabel: e.detail.value });
+  },
+
+  pickNewEmoji(e: WechatMiniprogram.TouchEvent) {
+    this.setData({ newSceneEmoji: e.currentTarget.dataset.emoji });
+  },
+
+  confirmAddScene() {
+    const label = this.data.newSceneLabel.trim();
+    if (!label) {
+      wx.showToast({ title: '给场景起个名字（≤4 字）', icon: 'none' });
+      return;
+    }
+    const scene = addCustomScene(label, this.data.newSceneEmoji);
+    if (!scene) {
+      wx.showToast({ title: '这个场景已经有了', icon: 'none' });
+      return;
+    }
+    // 创建后自动选中新场景，chips 重读；随后「收进册子」直接落到新场景
+    this.setData({
+      addingScene: false,
+      newSceneLabel: '',
+      sceneId: scene.id,
+      sceneGuessed: false,
+      scenes: getSceneChips(),
+    });
+    wx.vibrateShort({ type: 'light' });
+    wx.showToast({ title: `已建场景 ${scene.emoji}`, icon: 'none' });
   },
 
   // ---------- 照片（≤3 张） [硬约束 #15] ----------

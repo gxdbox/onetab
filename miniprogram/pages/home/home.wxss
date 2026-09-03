@@ -102,10 +102,31 @@
   margin-top: 16rpx;
 }
 .drawer-toggle {
-  margin-top: 48rpx;
   color: #8b8172;
   font-size: 26rpx;
   text-decoration: underline;
+}
+
+/* 需求 2-A：今天吃什么直达 + 筛选 */
+.quick-row {
+  margin-top: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+}
+.quick-eat {
+  background: #f7e9c6;
+  border: 2rpx solid #c9a24b;
+  color: #7a6230;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  padding: 14rpx 36rpx;
+  line-height: 1.6;
+}
+.quick-row .drawer-toggle {
+  margin-top: 0;
 }
 
 /* 记一个 */
@@ -194,6 +215,12 @@
 }
 .chip-add {
   border-style: dashed;
+}
+/* 自定义场景管理 chip：可点 ✕ 删除 */
+.chip-custom {
+  background: #f7e9c6;
+  border-color: #c9a24b;
+  color: #7a6230;
 }
 
 /* 朱砂皮肤：仪式感可磨损，提供最小幅度的更新空间 */

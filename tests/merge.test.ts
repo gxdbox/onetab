@@ -102,11 +102,26 @@ describe('导入数据规范化（不信任任何外部 JSON）', () => {
       treasures: [{ id: 'x', name: '面' }, { bad: true }, 'junk'],
       draws: [{ id: 'd', treasureId: 'x' }],
       promotions: 'not-an-array',
-      customScene: { id: 'custom', label: '遛娃' },
+      customScenes: [
+        { id: 'c:电影', emoji: '🎬', label: '电影' },
+        { id: 'bad', emoji: 'x', label: 'y' }, // 非 c: 开头 → 丢弃
+      ],
     });
     expect(p.treasures!.length).toBe(1);
     expect(p.draws!.length).toBe(1);
     expect(p.promotions).toBeUndefined();
-    expect(p.customScene!.label).toBe('遛娃');
+    expect(p.customScenes).toEqual([{ id: 'c:电影', emoji: '🎬', label: '电影' }]);
+  });
+
+  it('normalizePayload：V1 旧版单值 customScene 兼容升级为列表', () => {
+    const p = normalizePayload({ customScene: { id: 'custom', label: '遛娃' } });
+    expect(p.customScenes).toEqual([{ id: 'c:遛娃', emoji: '⭐', label: '遛娃' }]);
+  });
+
+  it('normalizeTreasure：接受 c: 开头的自定义场景 id，非法场景回退 eat', () => {
+    const custom = normalizeTreasure({ id: 'x', name: '电影', sceneId: 'c:电影' }, 0)!;
+    expect(custom.sceneId).toBe('c:电影');
+    const bad = normalizeTreasure({ id: 'y', name: '面', sceneId: 'hack' }, 0)!;
+    expect(bad.sceneId).toBe('eat');
   });
 });

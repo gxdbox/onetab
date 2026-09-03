@@ -8,7 +8,21 @@
  * [硬约束 #15] photos 只存引用（文件路径数组，≤3 张），绝不内嵌照片数据。
  */
 
-export type SceneId = 'eat' | 'play' | 'far' | 'rest' | 'custom';
+/**
+ * 场景体系（需求 1 变更）：预置四场景 + 可增删的多个自定义场景。
+ * 自定义场景 id 以 `c:` 前缀开头，永不与预置 id 冲突。
+ * 用 `PresetSceneId | (string & {})` 保留预置的自动补全，同时允许任意自定义 id。
+ */
+export type PresetSceneId = 'eat' | 'play' | 'far' | 'rest';
+export type SceneId = PresetSceneId | (string & {});
+
+/** 自定义场景（可多个）。emoji + label 由用户创建时指定，id 形如 `c:电影`。 */
+export interface CustomScene {
+  id: string;
+  emoji: string;
+  label: string; // ≤ 4 字
+}
+
 /** 类别（justThisOne 体系的收藏分类）：add 页自动猜测用，与 PWA 版 lib/types.ts 一致 */
 export type Category = 'food' | 'place' | 'activity' | 'thing' | 'media' | 'micro';
 export type Tier = 'wish' | 'verified';

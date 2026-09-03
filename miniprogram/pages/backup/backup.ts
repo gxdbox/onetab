@@ -6,7 +6,6 @@
  * 导出 JSON 不含照片本体，只带 photos 引用（照片是设备本地文件）。
  */
 import { repo } from '../../data/repo';
-import { getCustomScene, setCustomScene } from '../../data/prefs';
 
 Page({
   data: {
@@ -69,13 +68,7 @@ Page({
       wx.showToast({ title: '这不是有效的 JSON', icon: 'none' });
       return;
     }
-    const report = repo.importData(payload); // 合并语义 [硬约束 #9]
-    // 导入数据里的自定义场景：本地没有才采纳（本地的优先）
-    const raw = payload as Record<string, unknown>;
-    if (raw && raw.customScene && !getCustomScene()) {
-      const label = (raw.customScene as { label?: unknown }).label;
-      if (typeof label === 'string' && label.trim()) setCustomScene(label);
-    }
+    const report = repo.importData(payload); // 合并语义 [硬约束 #9]（含自定义场景合并）
     wx.showModal({
       title: '恢复完成',
       content: `新增 ${report.added} 条，更新 ${report.updated} 条，保留本地较新 ${report.kept} 条。\n现有条目一个都没丢。`,
