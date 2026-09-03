@@ -1,0 +1,89 @@
+.page {
+  padding: 48rpx 40rpx;
+}
+
+.section-title {
+  font-size: 40rpx;
+  margin-bottom: 20rpx;
+}
+.section-sub {
+  font-size: 28rpx;
+  line-height: 1.7;
+  color: #6b5f4c;
+}
+.center {
+  text-align: center;
+}
+
+/* 云同步未开启 */
+.setup-tip {
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  color: #a3967f;
+  line-height: 1.7;
+  background: #fdf9ef;
+  border: 2rpx dashed #d8ccae;
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.loading {
+  text-align: center;
+  color: #8b8172;
+  font-size: 30rpx;
+  margin-top: 160rpx;
+}
+
+/* 已加入：口令 */
+.room-code {
+  font-size: 72rpx;
+  font-weight: 700;
+  letter-spacing: 12rpx;
+  color: #7a6230;
+  background: #f7e9c6;
+  border: 2rpx solid #c9a24b;
+  border-radius: 24rpx;
+  padding: 32rpx 24rpx;
+  margin: 24rpx auto;
+}
+.room-code-tip {
+  font-size: 24rpx;
+  color: #8b8172;
+}
+.room-members {
+  margin-top: 28rpx;
+  font-size: 26rpx;
+  color: #6b5f4c;
+}
+.room-sync-tip {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #a3967f;
+  line-height: 1.7;
+}
+
+/* 未加入 */
+.divider {
+  margin: 40rpx 0 20rpx;
+  color: #8b8172;
+  font-size: 24rpx;
+  text-align: center;
+}
+.join-input {
+  margin-bottom: 24rpx;
+  background: #fdf9ef;
+  border: 2rpx solid #e3d5bb;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 34rpx;
+  letter-spacing: 6rpx;
+  text-align: center;
+}
+.placeholder {
+  color: #c4b99f;
+}
+.btn {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 8rpx 0;
+}

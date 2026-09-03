@@ -8,7 +8,8 @@
     "pages/archive/archive",
     "pages/backup/backup",
     "pages/report/report",
-    "pages/edit/edit"
+    "pages/edit/edit",
+    "pages/couple/couple"
   ],
   "window": {
     "navigationBarBackgroundColor": "#f6efe0",

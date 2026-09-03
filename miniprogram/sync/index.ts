@@ -6,7 +6,9 @@
  *
  * V2：填好 config.ts 的 SYNC_ENV_ID 后自动切换到 TcbSyncAdapter（跨设备快照同步），
  * 拉取同样走合并语义，云上较旧的数据永远盖不过本地较新的数据。
- * 只有 App 壳（app.ts）被允许 import 本目录。
+ * 需求 2-B 情侣共册：加入共册后，同步目标变成共享快照（两个 openid 读写同一个 doc）。
+ * 只有 App 壳（app.ts）与「情侣共册」页面（pages/couple）被允许 import 本目录——
+ * 后者是同步功能的 UI 出口；数据层（core/ data/）依旧对 sync/ 一无所知。
  */
 import { SYNC_ENV_ID } from './config';
 import { createTcbSyncAdapter } from './tcb';

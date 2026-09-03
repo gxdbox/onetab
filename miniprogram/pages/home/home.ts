@@ -360,6 +360,12 @@ Page({
     wx.navigateTo({ url: '/pages/backup/backup' });
   },
 
+  /** 需求 2-B：情侣共册（云同步共享快照） */
+  goCouple() {
+    this.setData({ drawerOpen: false });
+    wx.navigateTo({ url: '/pages/couple/couple' });
+  },
+
   goReport() {
     this.setData({ drawerOpen: false });
     wx.navigateTo({ url: '/pages/report/report' });

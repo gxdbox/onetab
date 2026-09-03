@@ -1,0 +1,9 @@
+{
+  "name": "couple",
+  "version": "1.0.0",
+  "description": "情侣共册：房间 + 共享快照读写（成员身份服务端校验）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

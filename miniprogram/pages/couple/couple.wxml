@@ -1,0 +1,50 @@
+<view class="page">
+  <!-- 云同步未开启：只给指引，不给操作 -->
+  <block wx:if="{{!enabled}}">
+    <view class="paper-panel section">
+      <view class="section-title serif">💑 情侣共册</view>
+      <view class="section-sub">两个人共享同一本册子——你记的 TA 也能看到，TA 收的快乐你随手一指就能抽中。</view>
+      <view class="setup-tip">云同步还没开启。开启步骤：微信开发者工具 → 云开发 → 创建环境 → 部署 login 和 couple 云函数 → 在 sync/config.ts 填入环境 ID。</view>
+    </view>
+  </block>
+
+  <block wx:elif="{{loading}}">
+    <view class="loading serif">正在确认共册状态…</view>
+  </block>
+
+  <!-- 已加入共册 -->
+  <block wx:elif="{{room}}">
+    <view class="paper-panel section center">
+      <view class="section-title serif">💑 我们的小确幸</view>
+      <view class="room-code" bind:tap="copyCode">{{room.code}}</view>
+      <view class="room-code-tip">6 位口令 · 点一下复制，发给 TA 加入</view>
+      <view class="room-members">成员 {{room.members.length}}/2 · 两人共享一本册子</view>
+      <view class="room-sync-tip">打开小程序会自动对齐：TA 新收的快乐会合进来，你记的也会同步给 TA。</view>
+    </view>
+    <view class="btns">
+      <button class="btn-ghost btn" bind:tap="doLeave">退出共册</button>
+    </view>
+  </block>
+
+  <!-- 未加入 -->
+  <block wx:else>
+    <view class="paper-panel section">
+      <view class="section-title serif">💑 情侣共册</view>
+      <view class="section-sub">两个人共享同一本册子。「今天吃什么」僵持时，谁记的都算数，闭眼一指就有答案。</view>
+
+      <view class="divider">没有共册？建一个</view>
+      <button class="btn-main btn" bind:tap="doCreate" disabled="{{busy}}">＋ 创建共册</button>
+
+      <view class="divider">TA 已经建好了？输口令加入</view>
+      <input
+        class="join-input"
+        placeholder="6 位口令，比如 AB3XYZ"
+        placeholder-class="placeholder"
+        value="{{joinCode}}"
+        bindinput="onJoinCode"
+        maxlength="6"
+      />
+      <button class="btn-ghost btn" bind:tap="doJoin" disabled="{{busy}}">加入 TA 的共册</button>
+    </view>
+  </block>
+</view>

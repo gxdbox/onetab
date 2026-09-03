@@ -108,6 +108,7 @@
     </view>
     <view class="drawer-tip">安全牌只抽烫金条目——哪怕只剩两个，也不混入素描。</view>
     <view class="drawer-link" bind:tap="goBackup">📖 备份与恢复</view>
+    <view class="drawer-link" bind:tap="goCouple">💑 情侣共册</view>
     <view class="drawer-link" bind:tap="goReport">🎁 年度快乐报告</view>
   </view>
 
